@@ -13,7 +13,7 @@ def get_logged_user():
 		token = request.cookies.get('token')
 		time = request.cookies.get('time')
 		if token and time:
-			request.user = library.get_user_cookies(token, int(time))
+			request.user = library.get_user_cookies(token, float(time))
 			if request.user:
 				request.user.token = token
 
@@ -56,7 +56,10 @@ def login():
 		resp.set_cookie('token', session.hash)
 		resp.set_cookie('time', str(session.time))
 	else:
-		resp = make_response(render_template('login.html'))
+		if request.method == 'POST':
+			return redirect('/login')
+		else:
+			resp = render_template('login.html')
 	return resp
 
 
