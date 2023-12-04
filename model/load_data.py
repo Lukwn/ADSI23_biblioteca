@@ -41,7 +41,7 @@ cur.execute("""
 	CREATE TABLE Session(
 		session_hash varchar(32) primary key,
 		user_id integer,
-		last_login integer,
+		last_login float,
 		FOREIGN KEY(user_id) REFERENCES User(id)
 	)
 """)
