@@ -15,20 +15,20 @@ class LibraryController:
 
     def search_books(self, title="", author="", limit=6, page=0):
         count = db.select("""
-				SELECT count() 
-				FROM Book b, Author a 
-				WHERE b.author=a.id 
-					AND b.title LIKE ? 
-					AND a.name LIKE ? 
-		""", (f"%{title}%", f"%{author}%"))[0][0]
+                SELECT count() 
+                FROM Book b, Author a 
+                WHERE b.author=a.id 
+                    AND b.title LIKE ? 
+                    AND a.name LIKE ? 
+        """, (f"%{title}%", f"%{author}%"))[0][0]
         res = db.select("""
-				SELECT b.* 
-				FROM Book b, Author a 
-				WHERE b.author=a.id 
-					AND b.title LIKE ? 
-					AND a.name LIKE ? 
-				LIMIT ? OFFSET ?
-		""", (f"%{title}%", f"%{author}%", limit, limit * page))
+                SELECT b.* 
+                FROM Book b, Author a 
+                WHERE b.author=a.id 
+                    AND b.title LIKE ? 
+                    AND a.name LIKE ? 
+                LIMIT ? OFFSET ?
+        """, (f"%{title}%", f"%{author}%", limit, limit * page))
         books = [
             Book(b[0], b[1], b[2], b[3], b[4])
             for b in res
@@ -51,7 +51,15 @@ class LibraryController:
         else:
             return None
 
-
+    def get_book(self, id):
+        b = db.select("""
+                        SELECT Book.*
+                        FROM Book
+                        WHERE Book.id = ?
+                """, (id,))
+        tupla = b[0]
+        book = Book(tupla[0],tupla[1],tupla[2],tupla[3],tupla[4])
+        return book
 '''
 	def search_gaiak(self, title="", limit=6, page=0):
 		count = db.select("""

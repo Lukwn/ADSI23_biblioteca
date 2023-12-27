@@ -42,6 +42,14 @@ def catalogue():
 	return render_template('catalogue.html', books=books, title=title, author=author, current_page=page,
 	                       total_pages=total_pages, max=max, min=min)
 
+
+@app.route('/book')
+def book():
+	id = request.values.get("id", "")
+	book= library.get_book(id=id)
+	return render_template('book.html', book=book)
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
 	if 'user' in dir(request) and request.user and request.user.token:
