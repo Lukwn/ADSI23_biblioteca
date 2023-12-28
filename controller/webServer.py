@@ -57,6 +57,13 @@ def profil(username):
 	picture = library.get_picture(user.picture)
 	return render_template('profil.html', user=user, picture=picture)
 
+@app.route('/book')
+def book():
+	id = request.values.get("id", "")
+	book= library.get_book(id=id)
+	return render_template('book.html', book=book)
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
 	if 'user' in dir(request) and request.user and request.user.token:
