@@ -13,23 +13,16 @@
           Search
       </button>
     </form>
-<!--
+
     <hr class="hr" />
 
     <div class="row">
 
-        {% for book in books %}
+        {% for gaia in gaiak %}
             <div class="col-lg-4 col-md-6 col-sm-12 my-2">
                 <div class="card d-flex flex-row" style="width: 18rem;">
-                    {% if book.cover: %}
-                        <img src="{{book.cover}}" class="rounded" style="max-width: 6rem; height: fit-content;">
-                    {% endif %}
                     <div class="card-body">
-                        <h5 class="card-title">{{book.title}}</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">{{book.author}}</h6>
-                        {% if book.description: %}
-                        <p class="card-text">{{book.description}}</p>
-                        {% endif %}
+                        <h5 class="card-title">{{gaia.izena}}</h5>
                     </div>
                 </div>
             </div>
@@ -65,7 +58,6 @@
         {% endif %}
       </ul>
     </nav>
--->
 
 </div>
 

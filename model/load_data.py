@@ -53,10 +53,6 @@ cur.execute("""
 """)
 
 cur.execute("""
-	INSERT INTO Gaia VALUES (NULL,'hola')
-""")
-
-cur.execute("""
 	CREATE TABLE Komentario(
 		user_id integer,
 		gaia_id integer,
@@ -76,6 +72,13 @@ for user in usuarios:
 	cur.execute(f"""INSERT INTO User VALUES (NULL, '{user['nombres']}', '{user['email']}', '{dataBase_password}')""")
 	con.commit()
 
+#### Insert gaiak
+with open('../gaiak.json', 'r') as f:
+	gaiak = json.load(f)['gaiak']
+
+for gaia in gaiak:
+	cur.execute(f"""INSERT INTO Gaia VALUES (NULL, '{gaia['izena']}')""")
+	con.commit()
 
 #### Insert books
 with open('../libros.tsv', 'r') as f:
@@ -93,6 +96,4 @@ for author, title, cover, description in libros:
 		            (title, author_id, cover, description.strip()))
 
 	con.commit()
-
-
 
