@@ -31,9 +31,29 @@ cur.execute("""
 cur.execute("""
 	CREATE TABLE User(
 		id integer primary key AUTOINCREMENT,
-		name varchar(20),
+		username varchar(20),
+		picture int,
+		firstname varchar(20),
+		lastname varchar(20),
+		phone int,
 		email varchar(30),
 		password varchar(32)
+	)
+""")
+
+cur.execute("""
+	CREATE TABLE Pictures(
+		ID integer,
+		link varchar(100)
+	)
+""")
+
+cur.execute("""
+	CREATE TABLE Eskaera(
+		EID1 integer,
+		EID2 integer,
+		baieztatuta boolean,
+		FOREIGN KEY(EID1, EID2) REFERENCES User(id)
 	)
 """)
 
@@ -61,6 +81,8 @@ cur.execute("""
 		FOREIGN KEY(gaia_id) REFERENCES Gaia(id)
 	)
 """)
+
+
 ### Insert users
 
 with open('usuarios.json', 'r') as f:
@@ -73,6 +95,14 @@ for user in usuarios:
 	cur.execute(f"""INSERT INTO User VALUES (NULL, '{user['nombres']}', '{user['email']}', '{dataBase_password}')""")
 	con.commit()
 
+## Insert eskaerak
+
+with open('eskaerak.json', 'r') as f:
+	eskaeras = json.load(f)['eskaerak']
+
+for eskaera in eskaeras:
+	cur.execute(f"""INSERT INTO Eskaera VALUES ('{eskaera['id_1']}', '{eskaera['id_2']}', '{eskaera['baieztatuta']}')""")
+	con.commit()
 
 #### Insert books
 with open('libros.tsv', 'r') as f:

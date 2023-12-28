@@ -35,6 +35,31 @@ class LibraryController:
 		]
 		return books, count
 
+	def search_lagunak(self, id=0, limit=10, page=0):
+		count = db.select("""
+						SELECT count() 
+						FROM Eskaera 
+						WHERE (EID1=? OR EID2=?) AND baieztatuta=1
+				""", (id, id))[0][0]
+		res = db.select("""
+						SELECT * 
+						FROM Eskaera 
+						WHERE (EID1=? OR EID2=?) AND baieztatuta=1
+						LIMIT ? OFFSET ?
+				""", (id, id, limit, limit * page))
+		eskaerak = [
+			self.getUsername(e[0]) if e[0]!=id  else self.getUsername(e[1])
+			for e in res
+		]
+		return eskaerak, count
+
+	def getUsername(self, id):
+		username = db.select("SELECT name FROM User WHERE id = ?", (id,))
+		if username:
+			return username[0][0]
+		else:
+			return None
+
 	def get_user(self, email, password):
 		user = db.select("SELECT * from User WHERE email = ? AND password = ?", (email, hash_password(password)))
 		if len(user) > 0:
@@ -48,6 +73,11 @@ class LibraryController:
 			return User(user[0][0], user[0][1], user[0][2])
 		else:
 			return None
+
+
+
+
+
 '''
 	def search_gaiak(self, title="", limit=6, page=0):
 		count = db.select("""

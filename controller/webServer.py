@@ -42,6 +42,15 @@ def catalogue():
 	return render_template('catalogue.html', books=books, title=title, author=author, current_page=page,
 	                       total_pages=total_pages, max=max, min=min)
 
+@app.route('/lagunSarea')
+def lagunSarea():
+	idUser = request.user.id
+	page = int(request.values.get("page", 1))
+	lagunak, nb_lagun = library.search_lagunak(id=idUser, page=page-1)
+	total_pages = (nb_lagun // 10) + 1
+	return render_template('lagunSarea.html', idUser=idUser, lagunak=lagunak, current_page=page,
+						   total_pages=total_pages, max=max, min=min)
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
