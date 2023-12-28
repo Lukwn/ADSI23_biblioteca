@@ -46,6 +46,21 @@ cur.execute("""
 	)
 """)
 
+cur.execute("""
+	CREATE TABLE Gaia(
+		id integer primary key AUTOINCREMENT,
+    	izena VARCHAR(50)
+    )
+""")
+
+cur.execute("""
+	CREATE TABLE Komentario(
+		user_id integer,
+		gaia_id integer,
+		txt varchar(250)
+		FOREIGN KEY(gaia_id) REFERENCES Gaia(id)
+	)
+""")
 ### Insert users
 
 with open('usuarios.json', 'r') as f:
