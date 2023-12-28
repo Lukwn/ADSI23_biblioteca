@@ -5,20 +5,20 @@
 
     <form class="form-inline">
       <div class="input-group mb-2 mr-sm-2">
-        <label for="title" class="col-sm-2 col-form-label">Title</label>
-        <input type="text" class="form-control mb-2" id="title" name="title" placeholder="Izena" {% if title != "": %}value="{{title}}"{% endif %}>
+        <label for="title" class="col-sm-2 col-form-label">Gaia</label>
+        <input type="text" class="form-control mb-2" id="title" name="title" placeholder="Gaia" {% if title != "": %}value="{{title}}"{% endif %}>
       </div>
       <button type="submit" class="btn btn-primary">
           <i class="fa fa-search"></i>
           Search
       </button>
     </form>
-
+<!--
     <hr class="hr" />
 
     <div class="row">
 
-        {% for gaia in gaiak %}
+        {% for book in books %}
             <div class="col-lg-4 col-md-6 col-sm-12 my-2">
                 <div class="card d-flex flex-row" style="width: 18rem;">
                     {% if book.cover: %}
@@ -65,7 +65,7 @@
         {% endif %}
       </ul>
     </nav>
-
+-->
 
 </div>
 
