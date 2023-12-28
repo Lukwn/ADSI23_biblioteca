@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container p-5 my-5 border">
+    <div class="card d-flex flex-row">
+            <img src="{{picture}}" class="rounded" style="max-width: 15rem; height: fit-content;">
+            <div class="card-body">
+                <h1 class="card-title">{{user.username}}</h1>
+                <h5 class="card-title">Izena: {{user.firstname}}</h5>
+                <h5 class="card-title">Abizena: {{user.lastname}}</h5>
+                <h5 class="card-title">Tel.: {{user.phone}}</h5>
+                <h5 class="card-title">Emaila: {{user.email}}</h5>
+            </div>
+    </div>
+</div>
+{% endblock %}

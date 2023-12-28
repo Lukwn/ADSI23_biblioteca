@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
+    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/fcd01cb3-6863-486b-b79f-ec18233b8048/console.sql" dialect="SQLite" />
     <file url="file://$PROJECT_DIR$/model/load_data.py" dialect="GenericSQL" />
   </component>
 </project>
