@@ -42,6 +42,15 @@ def catalogue():
 	return render_template('catalogue.html', books=books, title=title, author=author, current_page=page,
 	                       total_pages=total_pages, max=max, min=min)
 
+@app.route('/foro')
+def foro():
+	izena = request.values.get("izena", "")
+	page = int(request.values.get("page", 1))
+	print(izena)
+	gaiak, nb_gaiak = library.search_gaiak(izena=izena, page=page - 1)
+	total_pages = (nb_gaiak // 6) + 1
+	return render_template('foro.html', gaiak=gaiak, izena=izena, curren_page=page,
+						   total_pages=total_pages, max=max, min=min())
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
