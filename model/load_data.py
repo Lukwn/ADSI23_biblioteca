@@ -5,9 +5,8 @@ import json
 salt = "library"
 
 
-con = sqlite3.connect("datos.db")
+con = sqlite3.connect("../datos.db")
 cur = con.cursor()
-
 
 ### Create tables
 cur.execute("""
@@ -54,16 +53,20 @@ cur.execute("""
 """)
 
 cur.execute("""
+	INSERT INTO Gaia VALUES (NULL,'hola')
+""")
+
+cur.execute("""
 	CREATE TABLE Komentario(
 		user_id integer,
 		gaia_id integer,
-		txt varchar(250)
+		txt varchar(250),
 		FOREIGN KEY(gaia_id) REFERENCES Gaia(id)
 	)
 """)
 ### Insert users
 
-with open('usuarios.json', 'r') as f:
+with open('../usuarios.json', 'r') as f:
 	usuarios = json.load(f)['usuarios']
 
 for user in usuarios:
@@ -75,7 +78,7 @@ for user in usuarios:
 
 
 #### Insert books
-with open('libros.tsv', 'r') as f:
+with open('../libros.tsv', 'r') as f:
 	libros = [x.split("\t") for x in f.readlines()]
 
 for author, title, cover, description in libros:

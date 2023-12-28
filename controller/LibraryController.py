@@ -1,4 +1,4 @@
-from model import Connection, Book, User
+from model import Connection, Book, User, Gaia
 from model.tools import hash_password
 
 db = Connection()
@@ -37,24 +37,20 @@ class LibraryController:
 	def search_gaiak(self, izena="", limit=6, page=0):
 		count = db.select("""
 				SELECT count() 
-				FROM Gaiak 
-				WHERE b.author=a.id 
-					AND b.title LIKE ? 
-					AND a.name LIKE ? 
-		""", (f"%{title}%", f"%{author}%"))[0][0]
+				FROM Gaia
+				WHERE izena LIKE ? 
+		""", (f"%{izena}%",))[0][0]
 		res = db.select("""
-				SELECT b.* 
-				FROM Book b, Author a 
-				WHERE b.author=a.id 
-					AND b.title LIKE ? 
-					AND a.name LIKE ? 
+				SELECT *
+				FROM Gaia
+				WHERE izena LIKE ? 
 				LIMIT ? OFFSET ?
-		""", (f"%{title}%", f"%{author}%", limit, limit*page))
-		books = [
-			Book(b[0],b[1],b[2],b[3],b[4])
-			for b in res
+		""", (f"%{izena}%", limit, limit*page))
+		gaiak = [
+			Gaia(g[0],g[1])
+			for g in res
 		]
-		return books, count
+		return gaiak, count
 	def get_user(self, email, password):
 		user = db.select("SELECT * from User WHERE email = ? AND password = ?", (email, hash_password(password)))
 		if len(user) > 0:
