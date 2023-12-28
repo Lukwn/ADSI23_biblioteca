@@ -46,11 +46,16 @@ def catalogue():
 def lagunSarea():
 	idUser = request.user.id
 	page = int(request.values.get("page", 1))
-	lagunak, nb_lagun = library.search_lagunak(id=idUser, page=page-1)
+	lagunak, pictures, nb_lagun = library.search_lagunak(id=idUser, page=page-1)
 	total_pages = (nb_lagun // 10) + 1
-	return render_template('lagunSarea.html', idUser=idUser, lagunak=lagunak, current_page=page,
+	return render_template('lagunSarea.html', idUser=idUser, lagunak=lagunak, pictures=pictures, zip=zip, current_page=page,
 						   total_pages=total_pages, max=max, min=min)
 
+@app.route('/<username>')
+def profil(username):
+	user = library.getUserUsername(username)
+	picture = library.get_picture(user.picture)
+	return render_template('profil.html', user=user, picture=picture)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -74,8 +79,7 @@ def login():
 
 @app.route('/logout')
 def logout():
-	path = request.values.get("path", "/")
-	resp = redirect(path)
+	resp = redirect('/')
 	resp.delete_cookie('token')
 	resp.delete_cookie('time')
 	if 'user' in dir(request) and request.user and request.user.token:
