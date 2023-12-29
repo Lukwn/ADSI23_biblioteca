@@ -47,7 +47,7 @@ class LibraryController:
 				LIMIT ? OFFSET ?
 		""", (f"%{izena}%", limit, limit*page))
 		gaiak = [
-			Gaia(g[0],g[1])
+			Gaia(g[0], g[1])
 			for g in res
 		]
 		return gaiak, count
