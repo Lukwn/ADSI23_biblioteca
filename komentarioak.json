@@ -1,0 +1,39 @@
+{
+  "komentarioak": [
+    {
+      "id": "1",
+      "gaia_id": "1",
+      "txt": "soy un comentario"
+    },
+    {
+      "id": "2",
+      "gaia_id": "2",
+      "txt": "soy un comentario"
+    },
+    {
+      "id": "3",
+      "gaia_id": "1",
+      "txt": "soy un comentario"
+    },
+    {
+      "id": "4",
+      "gaia_id": "3",
+      "txt": "soy un comentario"
+    },
+    {
+      "id": "5",
+      "gaia_id": "4",
+      "txt": "soy un comentario"
+    },
+    {
+      "id": "6",
+      "gaia_id": "1",
+      "txt": "soy un comentario"
+    },
+    {
+      "id": "7",
+      "gaia_id": "5",
+      "txt": "soy un comentario"
+    }
+  ]
+}
