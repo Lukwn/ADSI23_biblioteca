@@ -2,31 +2,38 @@
   "gaiak": [
     {
       "id": "1",
-      "izena": "Adibide1"
+      "izena": "Adibide1",
+      "komentarioak": [["1","1","soy un comentario"],["2","1","hola, que hase!!"]]
     },
     {
       "id": "2",
-      "izena": "Adibide2"
+      "izena": "Adibide2",
+      "komentarioak": []
     },
     {
       "id": "3",
-      "izena": "Adibide3"
+      "izena": "Adibide3",
+      "komentarioak": []
     },
     {
       "id": "4",
-      "izena": "Adibide4"
+      "izena": "Adibide4",
+      "komentarioak": []
     },
     {
       "id": "5",
-      "izena": "Adibide5"
+      "izena": "Adibide5",
+      "komentarioak": []
     },
     {
       "id": "6",
-      "izena": "Adibide6"
+      "izena": "Adibide6",
+      "komentarioak": []
     },
     {
       "id": "7",
-      "izena": "Adibide7"
+      "izena": "Adibide7",
+      "komentarioak": []
     }
   ]
 }

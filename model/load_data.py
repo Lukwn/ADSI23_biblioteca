@@ -54,7 +54,8 @@ cur.execute("""
 
 cur.execute("""
 	CREATE TABLE Komentario(
-		user_id integer,
+		id integer primary key AUTOINCREMENT,
+		--user_id integer,
 		gaia_id integer,
 		txt varchar(250),
 		FOREIGN KEY(gaia_id) REFERENCES Gaia(id)
@@ -77,7 +78,9 @@ with open('../gaiak.json', 'r') as f:
 	gaiak = json.load(f)['gaiak']
 
 for gaia in gaiak:
-	cur.execute(f"""INSERT INTO Gaia VALUES (NULL, '{gaia['izena']}')""")
+	cur.execute("INSERT INTO Gaia (id, izena) VALUES (?, ?)", (gaia['id'], gaia['izena']))
+	for komentario in gaia['komentarioak']:
+		cur.execute("INSERT INTO Komentario (gaia_id, txt) VALUES (?, ?)", (gaia['id'],komentario[2]))
 	con.commit()
 
 #### Insert books
