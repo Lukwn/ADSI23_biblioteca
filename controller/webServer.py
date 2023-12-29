@@ -52,10 +52,15 @@ def foro():
 	return render_template('foro.html', gaiak=gaiak, izena=izena, curren_page=page,
 						   total_pages=total_pages, max=max, min=min())
 
-@app.route('/book')
+@app.route('/book', methods=['GET', 'POST'])
 def book():
 	id = request.values.get("id", "")
-	book= library.get_book(id=id)
+	book = library.get_book(id=id)
+	if request.method == 'POST':
+		if 'user' in request.__dict__ and request.user and request.user.token:
+			print("Erreserba")
+		else:
+			return redirect("/login")
 	return render_template('book.html', book=book)
 
 

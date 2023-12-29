@@ -5,7 +5,7 @@ import json
 salt = "library"
 
 
-con = sqlite3.connect("datos.db")
+con = sqlite3.connect("../datos.db")
 cur = con.cursor()
 
 
@@ -57,13 +57,27 @@ cur.execute("""
 	CREATE TABLE Komentario(
 		user_id integer,
 		gaia_id integer,
-		txt varchar(250)
+		txt varchar(250),
 		FOREIGN KEY(gaia_id) REFERENCES Gaia(id)
 	)
 """)
+
+cur.execute("""
+	CREATE TABLE Erreserba(
+		user_id integer,
+		hasiera_data date,
+		book_id integer,
+		bueltatze_data date,
+		buelatu_da integer,
+		PRIMARY KEY (user_id, hasiera_data, book_id)
+		FOREIGN KEY(user_id) REFERENCES User(id),
+		FOREIGN KEY(book_id) REFERENCES Book(id)
+	)
+""")
+
 ### Insert users
 
-with open('usuarios.json', 'r') as f:
+with open('../usuarios.json', 'r') as f:
 	usuarios = json.load(f)['usuarios']
 
 for user in usuarios:
@@ -75,7 +89,7 @@ for user in usuarios:
 
 
 #### Insert books
-with open('libros.tsv', 'r') as f:
+with open('../libros.tsv', 'r') as f:
 	libros = [x.split("\t") for x in f.readlines()]
 
 for author, title, cover, description in libros:

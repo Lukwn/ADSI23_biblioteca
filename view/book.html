@@ -1,18 +1,24 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="col-lg-4 col-md-6 col-sm-12 my-2">
-                <div class="card d-flex flex-row" style="width: 18rem;">
-                    {% if book.cover: %}
-                        <img src="{{book.cover}}" class="rounded" style="max-width: 6rem; height: fit-content;">
-                    {% endif %}
-                    <div class="card-body">
-                        <h5 class="card-title"><a href="/book?id={{book.id}}">{{book.title}}</a></h5>
-                        <h6 class="card-subtitle mb-2 text-muted">{{book.author}}</h6>
-                        {% if book.description: %}
-                        <p class="card-text">{{book.description}}</p>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
+<div class="col-lg-4 col-md-6 col-sm-12 my-2 mx-auto">
+    <form class="form-inline" method="POST">
+    <div class="card d-flex flex-row text-center" style="width: 100%;">
+        {% if book.cover: %}
+        <img src="{{book.cover}}" class="rounded" style="max-width: 6rem; height: fit-content;">
+        {% endif %}
+        <div class="card-body">
+            <h5 class="card-title">{{book.title}}</h5>
+            <h6 class="card-subtitle mb-2 text-muted">{{book.author}}</h6>
+            {% if book.description: %}
+            <p class="card-text">{{book.description}}</p>
+            {% endif %}
+            <button type="submit" class="btn btn-primary btn-lg btn-block">
+                {{ "Erreserbatu" if 'user' in request.__dict__ and request.user and request.user.token else "Saioa hasi erreserbatzeko"
+                }}
+            </button>
+        </div>
+    </div>
+    </form>
+</div>
 {% endblock %}
