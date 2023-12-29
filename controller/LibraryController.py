@@ -51,6 +51,9 @@ class LibraryController:
 			for g in res
 		]
 		return gaiak, count
+	def get_gaia(self, id):
+		gaia = db.select("SELECT * from Gaia WHERE id = ?", (id))
+		return Gaia(gaia[0][0], gaia[0][1])
 	def get_user(self, email, password):
 		user = db.select("SELECT * from User WHERE email = ? AND password = ?", (email, hash_password(password)))
 		if len(user) > 0:

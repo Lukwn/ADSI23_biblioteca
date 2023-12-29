@@ -51,6 +51,11 @@ def foro():
 	return render_template('foro.html', gaiak=gaiak, izena=izena, current_page=page,
 						   total_pages=total_pages, max=max, min=min)
 
+@app.route('/gaia')
+def gaia():
+	id = request.values.get("id", "")
+	gaia = library.get_gaia(id=id)
+	return render_template('gaia.html', gaia=gaia, id=id, izena=gaia.izena, max=max, min=min)
 @app.route('/login', methods=['GET', 'POST'])
 def login():
 	if 'user' in dir(request) and request.user and request.user.token:

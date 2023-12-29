@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container p-5 my-5 border">
+
+    <form class="form-inline">
+      <div class="input-group mb-2 mr-sm-2">
+        <label for="title" class="col-sm-2 col-form-label">Komentario</label>
+        <input type="text" class="form-control mb-2" id="title" name="izena" placeholder="Prueba" {% if izena != "": %}value="{{izena}}"{% endif %}>
+      </div>
+      <button type="submit" class="btn btn-primary">
+          <i class="fa fa-search"></i>
+          Search
+      </button>
+    </form>
+    <p>El nombre del tema es: {{izena}} {{id}}</p>
+</div>
+{% endblock %}
