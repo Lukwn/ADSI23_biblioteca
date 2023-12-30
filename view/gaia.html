@@ -29,8 +29,7 @@
                             <div class="card-body">
                                 <h5 class="card-title">{{k.username}}</h5>
                                 <h5 class="card-title">{{k.txt}}</h5>
-                                {%if k.respondiendo_a != 0 %}<footer> {{k.respondiendo_a}}</footer>{% endif %}
-                                {%if k.respondiendo_a_txt != "" %}<footer> {{k.respondiendo_a_txt}}</footer>{% endif %}
+                                {%if k.respondiendo_a != 0 %}<footer> {{k.respondiendo_a}}: {{k.respondiendo_a_txt}}</footer>{% endif %}
                                 <div class="userCard">
                                     <div class="card mb-3">
                                         <div class="card-body" style="justify-content: center; align-items: center;">
