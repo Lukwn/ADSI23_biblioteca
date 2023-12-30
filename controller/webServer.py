@@ -1,3 +1,5 @@
+import string
+
 from .LibraryController import LibraryController
 from flask import Flask, render_template, request, redirect
 
@@ -222,3 +224,48 @@ def logout():
 		request.user.delete_session(request.user.token)
 		request.user = None
 	return resp
+
+@app.route('/foro', methods=['GET', 'POST'])
+def foro():
+	if request.method == 'POST':
+		izena = request.form.get("izena", "")
+		if len(izena) <= 50:
+			library.add_gaia(izena)
+	izena, page, gaiak, nb_gaiak, total_pages = foro_info()
+	return render_template('foro.html', gaiak=gaiak, izena=izena, current_page=page,
+						   total_pages=total_pages, max=max, min=min)
+
+@app.route('/gaia', methods=['GET', 'POST'])
+def gaia():
+	user_id = request.user.id
+	respondiendo_a = 0
+	respondiendo_a_txt = ""
+	id = request.values.get("id", "")
+	gaia = library.get_gaia(id=id)
+	page = int(request.values.get("page", 1))
+	if request.method == 'POST':
+		if request.form.get("respondiendo") == "true":
+			respondiendo_a = request.form.get("respondiendo_a")
+			respondiendo_a_txt = request.form.get("respondiendo_a_txt")
+		library.add_komentario(id, user_id, request.form.get("txt", ""), respondiendo_a, respondiendo_a_txt)
+	komentarioak, count = library.search_komentarioak(id)
+	total_pages = (count // 6) + 1
+	return render_template('gaia.html', komentarioak=komentarioak, gaia=gaia, id=id, izena=gaia.izena,
+						   respondiendo_a=respondiendo_a, respondiendo_a_txt=respondiendo_a_txt, current_page=page, total_pages=total_pages, max=max, min=min)
+@app.route('/add_gaia', methods=['GET', 'POST'])
+def add_gaia():
+	if request.method == 'POST':
+		string.izena = request.form.get("izena", "")
+		if len(string.izena) <= 50:
+			library.add_gaia(string.izena)
+			"""izena, page, gaiak, nb_gaiak, total_pages = foro_info()
+			return render_template('foro.html', gaiak=gaiak, izena=izena, current_page=page,
+								   total_pages=total_pages, max=max, min=min)"""
+	return render_template('add_gaia.html')
+
+def foro_info():
+	izena = request.values.get("izena", "")
+	page = int(request.values.get("page", 1))
+	gaiak, nb_gaiak = library.search_gaiak(izena=izena, page=page - 1)
+	total_pages = (nb_gaiak // 6) + 1
+	return izena, page, gaiak, nb_gaiak, total_pages

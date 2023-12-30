@@ -1,4 +1,4 @@
-from model import Connection, Book, User, Erreseina
+from model import Connection, Book, User, Erreseina, Gaia, Komentario
 from flask import request
 from model.tools import hash_password
 
@@ -37,6 +37,55 @@ class LibraryController:
         ]
         return books, count
 
+    def search_gaiak(self, izena="", limit=6, page=0):
+        count = db.select("""
+    			SELECT count() 
+    			FROM Gaia
+    			WHERE izena LIKE ? 
+    	""", (f"%{izena}%",))[0][0]
+        res = db.select("""
+    			SELECT *
+    			FROM Gaia
+    			WHERE izena LIKE ? 
+    			LIMIT ? OFFSET ?
+    	""", (f"%{izena}%", limit, limit * page))
+        gaiak = [
+            Gaia(g[0], g[1])
+            for g in res
+        ]
+        return gaiak, count
+
+    def search_komentarioak(self, gaia_id="", limit=6, page=0):
+        count = db.select("""
+    					SELECT count() 
+    					FROM Komentario
+    					WHERE gaia_id LIKE ? 
+    			""", (f"%{gaia_id}%",))[0][0]
+        res = db.select("""
+    					SELECT u.username, k.*
+    					FROM Komentario k, User u
+    					WHERE gaia_id LIKE ? AND u.id = k.user_id
+    					LIMIT ? OFFSET ? 
+    			""", (f"%{gaia_id}%", limit, limit * page))
+        komentarioak = [
+            Komentario(k[0], k[1], k[2], k[3], k[4], k[5], k[6])
+            for k in res
+        ]
+        return komentarioak, count
+
+    def get_gaia(self, id):
+        gaia = db.select("SELECT * from Gaia WHERE id = ?", (id,))
+        if gaia:
+            return Gaia(gaia[0][0], gaia[0][1])
+        else:
+            return None
+
+    def add_gaia(self, izena):
+        db.insert("INSERT INTO Gaia (izena) VALUES (?)", (izena,))
+
+    def add_komentario(self, gaia_id, user_id, txt, respondiendo_a, respondiendo_a_txt):
+        db.insert("INSERT INTO Komentario (gaia_id, user_id, txt, respondiendo_a, respondiendo_a_txt) VALUES (?, ?, ?, ?, ?)",
+            (gaia_id, user_id, txt, respondiendo_a, respondiendo_a_txt,))
     def get_book(self, id):
         b = db.select("""
                         SELECT Book.*

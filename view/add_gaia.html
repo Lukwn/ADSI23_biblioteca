@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container p-5 my-5 border">
+
+        <div class="userCard">
+               <div class="card d-flex flex-row" style="width: 76.4rem;">
+                   <div class="card-body" style="justify-content: center; align-items: center;">
+                       <form class="form-inline" method="POST">
+                           <div class="input-group mb-2 mr-sm-2">
+                               <label for="title" class="col-sm-2 col-form-label">Gaia sortu:</label>
+                               <input type="text" class="form-control mb-2" id="izena" name="izena" placeholder="Izena" {% if izena %}value="{{izena}}"{% endif %}>
+                           </div>
+
+                          <button type="submit" class="btn btn-primary">
+                                Add
+                          </button>
+                          <h5 class="nav-item"><a href="/foro" class="nav-link" style="margin-top:2rem; color:darkred"</a>Bueltatu</h5>
+
+                       </form>
+                   </div>
+               </div>
+        </div>
+
+    </div>
+{% endblock %}
+
