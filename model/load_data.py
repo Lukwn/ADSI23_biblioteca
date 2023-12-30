@@ -36,23 +36,25 @@ def __init__():
 			lastname varchar(20),
 			phone int,
 			email varchar(30),
-			password varchar(32)
+			password varchar(32),
+			baimenak boolean,
+			FOREIGN KEY (picture) REFERENCES Pictures(ID)
 		)
 	""")
 
 	cur.execute("""
 		CREATE TABLE Pictures(
-			ID integer,
+			ID integer primary key ,
 			link varchar(100)
 		)
 	""")
 
 	cur.execute("""
 		CREATE TABLE Eskaera(
-			EID1 integer,
-			EID2 integer,
+			EID1 integer primary key ,
+			EID2 integer primary key,
 			baieztatuta boolean,
-			FOREIGN KEY(EID1, EID2) REFERENCES User(id)
+			FOREIGN KEY(EID1, EID2) REFERENCES User(id, id)
 		)
 	""")
 

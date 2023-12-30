@@ -13,7 +13,7 @@ class Session:
 		return f"{self.hash} ({self.time})"
 
 class User:
-	def __init__(self, id, username, email, firstname, lastname, picture, phone):
+	def __init__(self, id, username, email, firstname, lastname, picture, phone, baimenak):
 		self.id = id
 		self.username = username
 		self.picture = picture
@@ -21,6 +21,7 @@ class User:
 		self.lastname = lastname
 		self.phone = phone
 		self.email = email
+		self.baimenak = baimenak
 
 	def __str__(self):
 		return f"{self.username} ({self.email})"

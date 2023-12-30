@@ -23,8 +23,8 @@
           {% if 'user' in request.__dict__ and request.user and request.user.token: %}
           <li class="nav-item"><a href="/lagunSarea" class="nav-link {% if request.path == '/lagunSarea' %}active{% endif %}">Lagun Sarea</a></li>
           <li class="nav-item"><span class="nav-link disabled">{{request.user.username}}</span></li>
-          <li class="nav-item"><a href="/{{request.user.username}}" class="nav-link"><i class="fa fa-user"></i></a></li>
-          <li class="nav-item"><a href="/logout?path={{request.path}}" class="nav-link"><i class="fa fa-sign-out fa-lg"></i></a></li>
+          <li class="nav-item"><a href="/usr-{{request.user.username}}" class="nav-link"><i class="fa fa-user" style="color: gray"></i></a></li>
+          <li class="nav-item"><a href="/logout?path={{request.path}}" class="nav-link"><i class="fa fa-sign-out fa-lg" style=" color: #DA1700"></i></a></li>
           {% else %}
           <li class="nav-item"><a href="/login" class="nav-link {% if request.path == '/login' %}active{% endif %}">Login</a></li>
           {% endif %}

@@ -3,7 +3,22 @@
     {
       "id_1": "1",
       "id_2": "2",
-      "baieztatuta": "True"
+      "baieztatuta": true
+    },
+    {
+      "id_1": "3",
+      "id_2": "1",
+      "baieztatuta": true
+    },
+    {
+      "id_1": "1",
+      "id_2": "4",
+      "baieztatuta": false
+    },
+    {
+      "id_1": "5",
+      "id_2": "1",
+      "baieztatuta": false
     }
   ]
 }

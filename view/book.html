@@ -1,18 +1,149 @@
 {% extends 'base.html' %}
 
+
 {% block content %}
-<div class="col-lg-4 col-md-6 col-sm-12 my-2">
-                <div class="card d-flex flex-row" style="width: 18rem;">
-                    {% if book.cover: %}
-                        <img src="{{book.cover}}" class="rounded" style="max-width: 6rem; height: fit-content;">
-                    {% endif %}
-                    <div class="card-body">
-                        <h5 class="card-title"><a href="/book?id={{book.id}}">{{book.title}}</a></h5>
-                        <h6 class="card-subtitle mb-2 text-muted">{{book.author}}</h6>
-                        {% if book.description: %}
-                        <p class="card-text">{{book.description}}</p>
-                        {% endif %}
+<div class="container p-5 my-5 border">
+
+    <div class="d-flex flex-row">
+        {% if book.cover: %}
+            <img src="{{book.cover}}" class="rounded" style="max-width: 6rem; height: fit-content; margin-right: 1rem">
+        {%else%}
+            <img src="https://www.articulosreligiosospeinado.com/es/images/NOportada.jpg" class="rounded" style="max-width: 7rem; height: fit-content; margin-right: 1rem">
+        {% endif%}
+        <div class="card-body">
+            <h5 class="card-title"><a href="/book?id={{book.id}}">{{book.title}}</a></h5>
+            <h6 class="card-subtitle mb-2 text-muted">{{book.author}}</h6>
+            {% if book.description: %}
+                <p class="card-text">{{book.description}}</p>
+            {% endif %}
+        </div>
+    </div>
+    {% if 'user' in request.__dict__ and request.user and request.user.token: %}
+        <h4 style="margin-top: 2rem; margin-bottom: 1rem">ERRESEINAK</h4>
+        <!-- ERRESEINA IDATZI -->
+        {% if not user_erreseina %}
+            <div class="userCard">
+                <div class="card d-flex flex-row" style="width: 76.4rem;">
+                    <div class="card-body" style="justify-content: center; align-items: center;">
+                        <form class="form-inline" method="POST">
+                            <div class="input-group mb-2 mr-sm-2">
+                                <label for="title" class="col-sm-2 col-form-label">Izar kopurua:</label>
+                                <input type="text" class="form-control mb-2" id="izarKop" name="izarKop" placeholder="0-10" {% if iruzkina %}value="{{iruzkina}}"{% endif %}>
+                            </div>
+                            <div class="input-group mb-2 mr-sm-2">
+                                <label for="author" class="col-sm-2 col-form-label">Iruzkina:</label>
+                                <input type="text" class="form-control mb-2" id="iruzkina" name="iruzkina" placeholder="adibide testua" {% if iruzkina %}value="{{iruzkina}}"{% endif %}>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                Publikatu
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
+        {% endif %}
+
+        <div class="row">
+        <!-- ERABILTZAILEAREN ERRESEINA -->
+        {% if user_erreseina and edit == False%}
+            <div class="userCard">
+                <div class="card d-flex flex-row" style="width: 76.4rem;">
+                    <div class="card-body" style=" justify-content: center; align-items: center">
+                        <h5 class="card-title">Nire Iruzkina</h5>
+                        <p class="card-text">{{user_erreseina.izarKop}}/10</p>
+                        <p class="card-text">{{user_erreseina.iruzkina}}</p>
+                        <!-- Botoia -->
+                        <form class="form-inline" method="POST">
+                            <input type="hidden" name="editable" value=True>
+                            <button type="submit" class="btn btn-primary">
+                                Editatu
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        {% if edit == True %}
+            <div class="userCard">
+                <div class="card d-flex flex-row" style="width: 76.4rem;">
+                    <div class="card-body" style="justify-content: center; align-items: center;">
+                        <h5 class="card-title">Nire Iruzkina</h5>
+                        <form class="form-inline" method="POST">
+                            <input type="hidden" name="editing" value=True>
+                            <div class="input-group mb-2 mr-sm-2">
+                                <label for="title" class="col-sm-2 col-form-label">Izar kopurua:</label>
+                                <input type="text" class="form-control mb-2" id="izarKop" name="izarKop" value="{% if izarKop %}{{ izarKop }}{% else %}{{user_erreseina.izarKop}}{% endif %}">
+                            </div>
+                            <div class="input-group mb-2 mr-sm-2">
+                                <label for="author" class="col-sm-2 col-form-label">Iruzkina:</label>
+                                <input type="text" class="form-control mb-2" id="iruzkina" name="iruzkina" value="{% if iruzkina %}{{ iruzkina }}{% else %}{{user_erreseina.iruzkina}}{% endif %}">
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                Publikatu
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {%else%}
+        <h4 class="card-title" style="margin-top: 2rem; margin-bottom: 2rem">Iruzkin bat jartzeko Log In egin behar duzu</h4>
+    {% endif %}
+
+
+       <!-- BESTE ERABILTZAILE GUZTIEN ERRESEINAK -->
+       {% for erreseina in erreseinak %}
+           <div class="userCard">
+               <div class="card d-flex flex-row" style="width: 76.4rem;">
+                   <div class="card-body" style=" justify-content: center; align-items: center">
+                       <h5 class="card-title">{{erreseina.username}}</h5>
+                       <p class="card-text">{{erreseina.izarKop}}/10</p>
+                       <p class="card-text">{{erreseina.iruzkina}}</p>
+                   </div>
+               </div>
+           </div>
+       {% endfor %}
+   </div>
+
+
+
+
+   <!-- EXTRAS -->
+   <hr class="hr" />
+   <nav>
+     <ul class="pagination justify-content-center">
+
+
+         {% if current_page-3 > 1: %}
+         <li class="page-item">
+             <a class="page-link" href="{{request.path}}?title={{title}}&author={{author}}&page=1" aria-label="Previous">
+                 <span aria-hidden="true">&laquo;</span>
+                 <span class="sr-only">Previous</span>
+             </a>
+         </li>
+         {% endif %}
+
+
+       {% for page in range(max(1, current_page-3),min(total_pages+1, current_page+4)) %}
+           <li class="page-item"><a class="page-link {% if page == current_page %}active{% endif %}" href="{{request.path}}?title={{title}}&author={{author}}&page={{page}}">{{page}}</a></li>
+       {% endfor %}
+
+
+       {% if current_page+3 < total_pages : %}
+         <li class="page-item">
+             <a class="page-link" href="{{request.path}}?title={{title}}&author={{author}}&page={{total_pages}}" aria-label="Next">
+                 <span aria-hidden="true">&raquo;</span>
+                 <span class="sr-only">Next</span>
+             </a>
+         </li>
+       {% endif %}
+     </ul>
+   </nav>
+
+
+
+
+</div>
+
+
 {% endblock %}

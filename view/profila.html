@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container p-5 my-5 border">
+    <div class="card d-flex flex-row">
+            <img src="{{picture}}" class="rounded" style="max-width: 15rem; height: fit-content;">
+            <div class="card-body">
+                <h1 class="card-title">{{user.username}}</h1>
+                <h5 class="card-title">Izena: {{user.firstname}}</h5>
+                <h5 class="card-title">Abizena: {{user.lastname}}</h5>
+                <h5 class="card-title">Tel.: {{user.phone}}</h5>
+                <h5 class="card-title">Emaila: {{user.email}}</h5>
+            </div>
+    </div>
+</div>
+
+<div class="container" style="display: flex">
+    <div class="half" style="flex: 1">
+        <div>
+            <h3 style="text-align: center">Erreseinak</h3>
+            <div class="row">
+                {% for erreseina, book_erreseina in zip(erreseinak, books_erreseina) %}
+                    <div class="userCard" style="align-items: center">
+                        <div class="card d-flex flex-row" style="align-items: center">
+                            {% if book_erreseina.cover: %}
+                                <img src="{{book_erreseina.cover}}" class="rounded" style="max-width: 7rem; height: fit-content;">
+                            {%else%}
+                                <img src="https://www.articulosreligiosospeinado.com/es/images/NOportada.jpg" class="rounded" style="max-width: 7rem; height: fit-content;">
+                            {% endif%}
+                            <div class="card-body">
+                                <h5 class="card-title"><a href="/book?id={{book_erreseina.id}}">{{book_erreseina.title}}</a></h5>
+                                <h6 class="card-subtitle mb-2 text-muted">{{book_erreseina.author}}</h6>
+                                <h6 class="card-subtitle mb-2 text-muted">{{erreseina.izarKop}}/10</h6>
+                                <p>{{erreseina.iruzkina}}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+           <hr class="hr" />
+            <nav>
+            <ul class="pagination justify-content-center">
+
+                {% if current_page_erreseina-3 > 1: %}
+                <li class="page-item">
+                    <a class="page-link" href="{{request.path}}?title={{title}}&page_erreseina=1" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                </li>
+                {% endif %}
+
+                {% for page_erreseina in range(max(1, current_page_erreseina-3),min(total_pages_erreseina+1, current_page_erreseina+4)) %}
+                <li class="page-item"><a class="page-link {% if page_erreseina == current_page_erreseina %}active{% endif %}" href="{{request.path}}?title={{title}}&page_erreseina={{page_erreseina}}">{{page_erreseina}}</a></li>
+                {% endfor %}
+
+                {% if current_page_erreseina+3 < total_pages_erreseina : %}
+                <li class="page-item">
+                    <a class="page-link" href="{{request.path}}?title={{title}}&page_erreseina={{total_pages_erreseina}}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+            </nav>
+        </div>
+    </div>
+    <div class="half" style="flex: 1">
+        <div>
+            <h3 style="text-align: center">Erreserbak</h3>
+            <div class="row">
+                {% for erreserba, book_erreserba in zip(erreserbak, books_erreserba) %}
+                    <div class="userCard" style="align-items: center">
+                        <div class="card d-flex flex-row" style="align-items: center">
+                            {% if book_erreserba.cover: %}
+                                <img src="{{book_erreserba.cover}}" class="rounded" style="max-width: 7rem; height: fit-content;">
+                            {%else%}
+                                <img src="https://www.articulosreligiosospeinado.com/es/images/NOportada.jpg" class="rounded" style="max-width: 7rem; height: fit-content;">
+                            {% endif%}
+                            <div class="card-body">
+                                <h5 class="card-title"><a href="/book?id={{book_erreserba.id}}">{{book_erreserba.title}}</a></h5>
+                                <h6 class="card-subtitle mb-2 text-muted">{{book_erreserba.author}}</h6>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <hr class="hr" />
+            <nav>
+            <ul class="pagination justify-content-center">
+
+                {% if current_page_erreserba-3 > 1: %}
+                <li class="page-item">
+                    <a class="page-link" href="{{request.path}}?title={{title}}&page_erreserba=1" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                </li>
+                {% endif %}
+
+                {% for page_erreserba in range(max(1, current_page_erreserba-3),min(total_pages_erreserba+1, current_page_erreserba+4)) %}
+                <li class="page-item"><a class="page-link {% if page_erreserba == current_page_erreserba %}active{% endif %}" href="{{request.path}}?title={{title}}&page_erreserba={{page_erreserba}}">{{page_erreserba}}</a></li>
+                {% endfor %}
+
+                {% if current_page_erreserba+3 < total_pages_erreserba : %}
+                <li class="page-item">
+                    <a class="page-link" href="{{request.path}}?title={{title}}&page_v{{total_pages_erreserba}}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+{% endblock %}

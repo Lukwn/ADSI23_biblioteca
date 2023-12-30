@@ -1,5 +1,5 @@
 from .LibraryController import LibraryController
-from flask import Flask, render_template, request, make_response, redirect
+from flask import Flask, render_template, request, redirect
 
 app = Flask(__name__, static_url_path='', static_folder='../view/static', template_folder='../view/')
 
@@ -51,17 +51,146 @@ def lagunSarea():
 	return render_template('lagunSarea.html', idUser=idUser, lagunak=lagunak, pictures=pictures, zip=zip, current_page=page,
 						   total_pages=total_pages, max=max, min=min)
 
-@app.route('/<username>')
-def profil(username):
-	user = library.getUserUsername(username)
-	picture = library.get_picture(user.picture)
-	return render_template('profil.html', user=user, picture=picture)
+@app.route('/erabiltzaileak')
+def erabiltzaileak():
+	username = request.values.get("username", "")
+	page = int(request.values.get("page", 1))
+	erabiltzaileak, pictures, nb_erabiltzaile = library.search_user(username=username, page=page - 1)
+	total_pages = (nb_erabiltzaile // 10) + 1
+	return render_template('erabiltzaileak.html', erabiltzaileak=erabiltzaileak, pictures =pictures, zip=zip,
+						   current_page=page, total_pages=total_pages, max=max, min=min)
 
-@app.route('/book')
+@app.route('/eskaerak')
+def eskaerak():
+	idUser = request.user.id
+	page_bidali = int(request.values.get("page_bidali", 1))
+	page_jaso = int(request.values.get("page_jaso", 1))
+	bidali, picturesBidali, nb_bidali = library.get_bidalitakoEskaerak(page=page_bidali-1)
+	jaso, picturesJaso, nb_jaso = library.get_jasotakoEskaerak(page=page_jaso - 1)
+	total_pages_bidali = (nb_bidali // 5) + 1
+	total_pages_jaso = (nb_jaso // 5) + 1
+	return render_template('eskaerak.html', idUser=idUser,
+						   bidali=bidali, jaso=jaso,
+						   picturesBidali=picturesBidali, picturesJaso=picturesJaso, zip=zip,
+						   current_page_bidali=page_bidali, current_page_jaso=page_jaso,
+						   total_pages_bidali=total_pages_bidali, total_pages_jaso=total_pages_jaso,
+						   max=max, min=min)
+
+@app.route('/<string>')
+def profil(string):
+
+	parts = string.split('-', 1)
+	if len(parts) < 2:
+		return "Formato incorrecto", 400
+
+	prefix, username = parts
+
+	#Erabiltzile bat balitz user->usr
+	if (prefix=='usr'):
+		user = library.getUserUsername(username)
+		if user is None:
+			return "Usuario no encontrado", 404
+		picture = library.get_picture(user.picture)
+		page_erreseina = int(request.values.get("page_erreseina", 1))
+		page_erreserba = int(request.values.get("page_erreserba", 1))
+		erreseinak, books_erreseina, count_erreseina = library.get_erreseinaGuztiak(id=user.id, page=page_erreseina - 1)
+		erreserbak, books_erreserba, count_erreserba = library.get_erreseinaGuztiak(id=user.id, page=page_erreserba - 1)
+		total_pages_erreseina = (count_erreseina // 5) + 1
+		total_pages_erreserba = (count_erreserba // 5) + 1
+		return render_template('profila.html', user=user, picture=picture,
+							   erreseinak=erreseinak, books_erreseina=books_erreseina,
+							   erreserbak=erreserbak, books_erreserba= books_erreserba,
+							   total_pages_erreseina=total_pages_erreseina, current_page_erreseina=page_erreseina,
+							   total_pages_erreserba=total_pages_erreserba, current_page_erreserba=page_erreserba,
+							   zip=zip, max=max, min=min)
+
+	#Lagun eskaera bidaltzea balitz gehituLaguna->gl
+	elif (prefix=='gl'):
+		return gehitu(username)
+
+	#Lagun bat kentzea edo Eskaera bat ukatzea balitz kendu
+	elif (prefix=='kl'):
+		return kendu(username)
+
+	# Eskaera bat ukatzea balitz ukatuEskaera->ue
+	elif (prefix == 'ue'):
+		return ukatu(username)
+
+	#Eskaera bat onartzea balitz onartuEskaera->oe
+	elif (prefix=='oe'):
+		return onartu(username)
+
+	else:
+		return "Prefix not found", 404
+
+def gehitu(id):
+	resp = redirect('/erabiltzaileak')
+	user = library.getUser(id)
+	library.gehituLagun(user.id)
+	return resp
+def kendu(id):
+	resp = redirect('/lagunSarea')
+	user = library.getUser(id)
+	library.kenduUkatu(user.id)
+	return resp
+def ukatu(id):
+	resp = redirect('/eskaerak')
+	user = library.getUser(id)
+	library.kenduUkatu(user.id)
+	return resp
+def onartu(id):
+	resp = redirect('/eskaerak')
+	user = library.getUser(id)
+	library.onartuEskaera(user.id)
+	return resp
+
+@app.route('/book', methods=['GET', 'POST'])
 def book():
+	edit= False
+
+	if request.method == 'POST':
+		editable = request.form.get("editable", "")
+		editing = request.form.get("editing", "")
+		if (editable == 'True'):
+			edit=True
+		elif (editing == 'True'):
+			user_id = request.user.id
+			book_id = request.values.get("id", "")
+			# erreseina
+			izarKop = int(request.form.get("izarKop", 0))
+			iruzkina = request.form.get("iruzkina", "")
+			# baldintzak
+			if 0 <= izarKop <= 10 and len(iruzkina) <= 1000:
+				library.edit_erreseina(user_id=user_id, book_id=book_id, izarKop=izarKop, iruzkina=iruzkina)
+		else:
+			user_id = request.user.id
+			book_id = request.values.get("id", "")
+			#erreseina
+			izarKop = int(request.form.get("izarKop", 0))
+			iruzkina = request.form.get("iruzkina", "")
+			# baldintzak
+			if 0 <= izarKop <= 10 and len(iruzkina) <= 1000:
+				library.add_erreseina(user_id=user_id, book_id=book_id, izarKop=izarKop, iruzkina=iruzkina)
+
+	if 'user' in dir(request) and request.user and request.user.token:
+		user_id = request.user.id
+	else:
+		user_id = 0
+
 	id = request.values.get("id", "")
-	book= library.get_book(id=id)
-	return render_template('book.html', book=book)
+	book = library.get_book(id=id)
+	erreseinak, count = library.get_erreseinak(id=id, user_id=user_id)
+	user_erreseina = library.get_user_erreseina(id=id, user_id=user_id)
+	page = int(request.values.get("page", 1))
+	total_pages = (count // 20) + 1
+	# konprobatu erreseina existitzen den edo utzik dagoen
+	if (len(user_erreseina) > 0):
+		# existitzekotan informazioa gorde
+		user_erreseina = user_erreseina[0]
+
+	return render_template('book.html', book=book, erreseinak=erreseinak, user_erreseina=user_erreseina, edit=edit,
+							   current_page=page,
+							   total_pages=total_pages, max=max, min=min)
 
 
 @app.route('/login', methods=['GET', 'POST'])
