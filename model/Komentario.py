@@ -1,7 +1,8 @@
 class Komentario:
-    def __init__(self, id, gaia_id, txt):
+    def __init__(self, id, gaia_id, user_id, txt):
         self.id = id
         self.gaia_id = gaia_id
+        self.user_id = user_id
         self.txt = txt
 
     def id_da(self, id):

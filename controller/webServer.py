@@ -1,3 +1,5 @@
+import string
+
 from .LibraryController import LibraryController
 from flask import Flask, render_template, request, make_response, redirect
 
@@ -42,12 +44,13 @@ def catalogue():
 	return render_template('catalogue.html', books=books, title=title, author=author, current_page=page,
 	                       total_pages=total_pages, max=max, min=min)
 
-@app.route('/foro')
+@app.route('/foro', methods=['GET', 'POST'])
 def foro():
-	izena = request.values.get("izena", "")
-	page = int(request.values.get("page", 1))
-	gaiak, nb_gaiak = library.search_gaiak(izena=izena, page=page - 1)
-	total_pages = (nb_gaiak // 6) + 1
+	if request.method == 'POST':
+		izena = request.form.get("izena", "")
+		if len(izena) <= 50:
+			library.add_gaia(izena)
+	izena, page, gaiak, nb_gaiak, total_pages = foro_info()
 	return render_template('foro.html', gaiak=gaiak, izena=izena, current_page=page,
 						   total_pages=total_pages, max=max, min=min)
 
@@ -55,7 +58,21 @@ def foro():
 def gaia():
 	id = request.values.get("id", "")
 	gaia = library.get_gaia(id=id)
-	return render_template('gaia.html', gaia=gaia, id=id, izena=gaia.izena, max=max, min=min)
+	page = int(request.values.get("page", 1))
+	komentarioak, count = library.search_komentarioak(id)
+	total_pages = (count // 6) + 1
+	return render_template('gaia.html', komentarioak=komentarioak, gaia=gaia, id=id,
+						   izena=gaia.izena, current_page=page, total_pages=total_pages, max=max, min=min)
+@app.route('/add_gaia', methods=['GET', 'POST'])
+def add_gaia():
+	if request.method == 'POST':
+		string.izena = request.form.get("izena", "")
+		if len(string.izena) <= 50:
+			library.add_gaia(string.izena)
+			"""izena, page, gaiak, nb_gaiak, total_pages = foro_info()
+			return render_template('foro.html', gaiak=gaiak, izena=izena, current_page=page,
+								   total_pages=total_pages, max=max, min=min)"""
+	return render_template('add_gaia.html')
 @app.route('/login', methods=['GET', 'POST'])
 def login():
 	if 'user' in dir(request) and request.user and request.user.token:
@@ -86,3 +103,10 @@ def logout():
 		request.user.delete_session(request.user.token)
 		request.user = None
 	return resp
+
+def foro_info():
+	izena = request.values.get("izena", "")
+	page = int(request.values.get("page", 1))
+	gaiak, nb_gaiak = library.search_gaiak(izena=izena, page=page - 1)
+	total_pages = (nb_gaiak // 6) + 1
+	return izena, page, gaiak, nb_gaiak, total_pages

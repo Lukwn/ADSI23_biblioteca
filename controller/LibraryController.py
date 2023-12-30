@@ -1,4 +1,5 @@
 from model import Connection, Book, User, Gaia
+from model.Komentario import Komentario
 from model.tools import hash_password
 
 db = Connection()
@@ -51,9 +52,29 @@ class LibraryController:
 			for g in res
 		]
 		return gaiak, count
+
+	def search_komentarioak(self, gaia_id="", limit=6, page=0):
+		count = db.select("""
+						SELECT count() 
+						FROM Komentario
+						WHERE gaia_id LIKE ? 
+				""", (f"%{gaia_id}%",))[0][0]
+		res = db.select("""
+						SELECT *
+						FROM Komentario
+						WHERE gaia_id LIKE ? 
+						LIMIT ? OFFSET ?
+				""", (f"%{gaia_id}%", limit, limit * page))
+		komentarioak = [
+			Komentario(k[0], k[1], k[2], k[3])
+			for k in res
+		]
+		return komentarioak, count
 	def get_gaia(self, id):
-		gaia = db.select("SELECT * from Gaia WHERE id = ?", (id))
+		gaia = db.select("SELECT * from Gaia WHERE id = ?", (id,))
 		return Gaia(gaia[0][0], gaia[0][1])
+	def add_gaia(self, izena):
+		db.insert("INSERT INTO Gaia (izena) VALUES (?)", (izena,))
 	def get_user(self, email, password):
 		user = db.select("SELECT * from User WHERE email = ? AND password = ?", (email, hash_password(password)))
 		if len(user) > 0:

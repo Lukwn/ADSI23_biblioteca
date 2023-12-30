@@ -3,37 +3,45 @@
     {
       "id": "1",
       "gaia_id": "1",
-      "txt": "soy un comentario"
+      "user_id": "1",
+      "txt": "soy un comentario 1"
     },
     {
       "id": "2",
       "gaia_id": "2",
-      "txt": "soy un comentario"
+      "txt": "soy un comentario 2",
+      "user_id": "1"
+
     },
     {
       "id": "3",
       "gaia_id": "1",
-      "txt": "soy un comentario"
+      "user_id": "1",
+      "txt": "soy un comentario 1"
     },
     {
       "id": "4",
       "gaia_id": "3",
-      "txt": "soy un comentario"
+      "txt": "soy un comentario 3",
+      "user_id": "1"
     },
     {
       "id": "5",
       "gaia_id": "4",
-      "txt": "soy un comentario"
+      "txt": "soy un comentario 4",
+      "user_id": "1"
     },
     {
       "id": "6",
       "gaia_id": "1",
-      "txt": "soy un comentario"
+      "txt": "soy un comentario 1",
+      "user_id": "1"
     },
     {
       "id": "7",
       "gaia_id": "5",
-      "txt": "soy un comentario"
+      "txt": "soy un comentario 5",
+      "user_id": "1"
     }
   ]
 }
