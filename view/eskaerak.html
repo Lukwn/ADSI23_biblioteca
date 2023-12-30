@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="" style="align-items: end; justify-content: end; display: flex">
+        <div class="button" style="margin-right: 10px;"><a href="/erabiltzaileak"><i class="fa fa-user-plus" style="font-size: 5rem;"></i></a></div>
+        <div class="button"><a href="/lagunSarea"><i class="fa fa-users" style="font-size: 5rem;"></i></a></div>
+    </div>
+</div>
+<div class="container" style="display: flex">
+    <div class="half" style="flex: 1">
+        <div class="container p-5 my-5 border">
+            <h3 style="text-align: center">Bidalitako eskaerak</h3>
+            <div class="row">
+                {% for b, pictureBidali in zip(bidali, picturesBidali) %}
+                    <div class="userCard" style="align-items: center">
+                        <div class="card d-flex flex-row" style="align-items: center">
+                            <img src="{{pictureBidali}}" class="rounded" style="max-width: 10rem; height: fit-content;">
+                            <div class="card-body" style=" justify-content: center; align-items: center;">
+                                <h1><a href="/{{b.username}}">{{b.username}}</a></h1>
+                            </div>
+                            <div class="button"><a href="/ue-{{b.id}}"><i class="fa fa-times" style="font-size: 5rem; color: #DA1700"></i></a></div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <hr class="hr" />
+            <nav>
+            <ul class="pagination justify-content-center">
+
+                {% if current_page_bidali-3 > 1: %}
+                <li class="page-item">
+                    <a class="page-link" href="{{request.path}}?title={{title}}&page_bidali=1" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                </li>
+                {% endif %}
+
+                {% for page_bidali in range(max(1, current_page_bidali-3),min(total_pages_bidali+1, current_page_bidali+4)) %}
+                <li class="page-item"><a class="page-link {% if page_bidali == current_page_bidali %}active{% endif %}" href="{{request.path}}?title={{title}}&page_bidali={{page_bidali}}">{{page_bidali}}</a></li>
+                {% endfor %}
+
+                {% if current_page_bidali+3 < total_pages_bidali : %}
+                <li class="page-item">
+                    <a class="page-link" href="{{request.path}}?title={{title}}&page_bidali={{total_pages_bidali}}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+            </nav>
+        </div>
+    </div>
+
+    <div class="half" style="flex: 1">
+        <div class="container p-5 my-5 border">
+            <h3 style="text-align: center">Jasotako eskaerak</h3>
+            <div class="row">
+                {% for j, pictureJaso in zip(jaso, picturesJaso) %}
+                    <div class="userCard" style="align-items: center">
+                        <div class="card d-flex flex-row" style="align-items: center">
+                            <img src="{{pictureJaso}}" class="rounded" style="max-width: 10rem; height: fit-content;">
+                            <div class="card-body" style=" justify-content: center; align-items: center;">
+                                <h1><a href="/{{j.username}}">{{j.username}}</a></h1>
+                            </div>
+                            <div class="button"><a href="/oe-{{j.id}}"><i class="fa fa-check" style="font-size: 5rem; color: green"></i></a></div>
+                            <div class="button"><a href="/ue-{{j.id}}"><i class="fa fa-times" style="font-size: 5rem; color: #DA1700"></i></a></div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <hr class="hr" />
+            <nav>
+            <ul class="pagination justify-content-center">
+
+                {% if current_page_jaso-3 > 1: %}
+                <li class="page-item">
+                    <a class="page-link" href="{{request.path}}?title={{title}}&author={{author}}&page_jaso=1" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                </li>
+                {% endif %}
+
+                {% for page_jaso in range(max(1, current_page_jaso-3),min(total_pages_jaso+1, current_page_jaso+4)) %}
+                <li class="page-item"><a class="page-link {% if page_jaso == current_page_jaso %}active{% endif %}" href="{{request.path}}?title={{title}}&page_jaso={{page_jaso}}">{{page_jaso}}</a></li>
+                {% endfor %}
+
+                {% if current_page_jaso+3 < total_pages_jaso : %}
+                <li class="page-item">
+                    <a class="page-link" href="{{request.path}}?title={{title}}&page_jaso={{total_pages_jaso}}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+
+
+
+{% endblock %}
