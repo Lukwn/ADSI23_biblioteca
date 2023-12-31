@@ -20,8 +20,8 @@
         <ul class="nav nav-pills">
           <li class="nav-item"><a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}" aria-current="page">Home</a></li>
           <li class="nav-item"><a href="/catalogue" class="nav-link {% if request.path == '/catalogue' %}active{% endif %}">Catalogue</a></li>
-          <li class="nav-item"><a href="/foro" class="nav-link {% if request.path == '/foro' %}active{% endif %}">Foro</a></li>
           {% if 'user' in request.__dict__ and request.user and request.user.token: %}
+          <li class="nav-item"><a href="/history" class="nav-link {% if request.path == '/history' %}active{% endif %}" aria-current="page">Historiala</a></li>
           <li class="nav-item"><span class="nav-link disabled">{{request.user.username}}</span></li>
           <li class="nav-item"><a href="/logout?path={{request.path}}" class="nav-link"><i class="fa fa-sign-out fa-lg"></i></a></li>
           {% else %}

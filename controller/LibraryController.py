@@ -60,6 +60,32 @@ class LibraryController:
         tupla = b[0]
         book = Book(tupla[0],tupla[1],tupla[2],tupla[3],tupla[4])
         return book
+
+    def search_history(self, id, title="", author="", limit=6, page=0):
+        count = db.select("""
+                SELECT count() 
+                FROM Book b, Author a, Erreserba e
+                WHERE b.author=a.id 
+                    AND b.title LIKE ? 
+                    AND a.name LIKE ?
+                    AND e.user_id = ?
+                    AND e.book_id = b.id
+        """, (f"%{title}%", f"%{author}%", f"{id}"))[0][0]
+        res = db.select("""
+                SELECT b.*
+                FROM Book b, Author a, Erreserba e
+                WHERE b.author=a.id 
+                    AND b.title LIKE ? 
+                    AND a.name LIKE ?
+                    AND e.user_id = ?
+                    AND e.book_id = b.id
+                LIMIT ? OFFSET ?
+        """, (f"%{title}%", f"%{author}%", f"{id}", limit, limit * page))
+        books = [
+            Book(b[0], b[1], b[2], b[3], b[4])
+            for b in res
+        ]
+        return books, count
 '''
 	def search_gaiak(self, title="", limit=6, page=0):
 		count = db.select("""

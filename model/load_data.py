@@ -75,8 +75,15 @@ cur.execute("""
 	)
 """)
 
-### Insert users
+#### Insert erreserbak
+with open('../erreserbak.json', 'r') as f:
+	erreserbak = json.load(f)['erreserbak']
+for erreserba in erreserbak:
+	cur.execute(f"""INSERT INTO Erreserba VALUES ('{erreserba['user_id']}', '{erreserba['hasiera_data']}', '{erreserba['book_id']}', '{erreserba['bueltatze_data']}', '{erreserba['bueltatu_da']}')""")
+	con.commit()
 
+
+### Insert users
 with open('../usuarios.json', 'r') as f:
 	usuarios = json.load(f)['usuarios']
 
@@ -104,6 +111,3 @@ for author, title, cover, description in libros:
 		            (title, author_id, cover, description.strip()))
 
 	con.commit()
-
-
-

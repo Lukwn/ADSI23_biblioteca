@@ -63,6 +63,19 @@ def book():
 			return redirect("/login")
 	return render_template('book.html', book=book)
 
+@app.route('/history')
+def history():
+	if 'user' in request.__dict__ and request.user and request.user.token:
+		title = request.values.get("title", "")
+		author = request.values.get("author", "")
+		page = int(request.values.get("page", 1))
+		id = request.user.id
+		books, nb_books = library.search_history(id=id, title=title, author=author, page=page - 1)
+		total_pages = (nb_books // 6) + 1
+		return render_template('history.html', books=books, title=title, author=author, current_page=page,
+							   total_pages=total_pages, max=max, min=min)
+	else:
+		return redirect('/login')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

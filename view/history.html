@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container p-5 my-5 border">
+
+    <form class="form-inline">
+      <div class="input-group mb-2 mr-sm-2">
+        <label for="title" class="col-sm-2 col-form-label">Title</label>
+        <input type="text" class="form-control mb-2" id="title" name="title" placeholder="Title" {% if title != "": %}value="{{title}}"{% endif %}>
+      </div>
+      <div class="input-group mb-2 mr-sm-2">
+        <label for="author" class="col-sm-2 col-form-label">Author</label>
+        <input type="text" class="form-control mb-2" id="author" name="author" placeholder="Author name" {% if author != "": %}value="{{author}}"{% endif %}>
+      </div>
+      <button type="submit" class="btn btn-primary">
+          <i class="fa fa-search"></i>
+          Search
+      </button>
+    </form>
+
+    <hr class="hr" />
+
+    <div class="list-group">
+
+        {% for book in books %}
+            <div class="col-lg-4 col-md-6 col-sm-12 my-2">
+                <div class="card d-flex flex-row" style="width: 100%;">
+                    {% if book.cover: %}
+                        <img src="{{book.cover}}" class="rounded" style="max-width: 6rem; height: fit-content;">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="/book?id={{book.id}}">{{book.title}}</a></h5>
+                        <h6 class="card-subtitle mb-2 text-muted">{{book.author}}</h6>
+                        {% if book.description: %}
+                        <p class="card-text">{{book.description}}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
+    </div>
+
+    <hr class="hr" />
+
+    <nav>
+      <ul class="pagination justify-content-center">
+
+          {% if current_page-3 > 1: %}
+          <li class="page-item">
+              <a class="page-link" href="{{request.path}}?title={{title}}&author={{author}}&page=1" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                  <span class="sr-only">Previous</span>
+              </a>
+          </li>
+          {% endif %}
+
+        {% for page in range(max(1, current_page-3),min(total_pages+1, current_page+4)) %}
+            <li class="page-item"><a class="page-link {% if page == current_page %}active{% endif %}" href="{{request.path}}?title={{title}}&author={{author}}&page={{page}}">{{page}}</a></li>
+        {% endfor %}
+
+        {% if current_page+3 < total_pages : %}
+          <li class="page-item">
+              <a class="page-link" href="{{request.path}}?title={{title}}&author={{author}}&page={{total_pages}}" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                  <span class="sr-only">Next</span>
+              </a>
+          </li>
+        {% endif %}
+      </ul>
+    </nav>
+
+
+</div>
+
+{% endblock %}
