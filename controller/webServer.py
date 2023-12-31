@@ -1,5 +1,6 @@
 from .LibraryController import LibraryController
 from flask import Flask, render_template, request, make_response, redirect
+from datetime import date, datetime
 
 app = Flask(__name__, static_url_path='', static_folder='../view/static', template_folder='../view/')
 
@@ -56,12 +57,34 @@ def foro():
 def book():
 	id = request.values.get("id", "")
 	book = library.get_book(id=id)
-	if request.method == 'POST':
-		if 'user' in request.__dict__ and request.user and request.user.token:
-			print("Erreserba")
-		else:
-			return redirect("/login")
-	return render_template('book.html', book=book)
+	msg = None
+	botoia_eskuragai = True
+	liburu_erreserbak = library.getLiburuErreserbaAktiboak(book_id=book.id)
+	if len(liburu_erreserbak) == 0:
+		if request.method == 'POST':
+			if "erreserbatu" in request.form:
+				if 'user' in request.__dict__ and request.user and request.user.token:
+					id = request.user.id
+					erab_erreserbak = library.getErabiltzaileErreserba(id=id)
+					ahal_du = True
+					for erreserba in erab_erreserbak:
+						erreserba_data = datetime.strptime(erreserba.bueltatze_data, "%Y-%m-%d").date()
+						if erreserba_data < date.today() and erreserba.bueltatu_da == 0:
+							msg = "Erreserbatu duzun liburu baten denbora-muga pasatu da eta ez duzu bueltatu, ezin dituzu liburu gehiago erreserbatu."
+							ahal_du = False
+							botoia_eskuragai = False
+							break
+					if ahal_du:
+						library.erreserbatu(id=id, book_id=book.id)
+						botoia_eskuragai = False
+						msg = "Liburua erreserbatu duzu."
+				else:
+					return redirect("/login")
+	else:
+		msg = "Ez dago liburuaren kopiarik eskuragai."
+		botoia_eskuragai = False
+
+	return render_template('book.html', book=book, msg=msg, botoia_eskuragai=botoia_eskuragai)
 
 @app.route('/history')
 def history():

@@ -68,7 +68,7 @@ cur.execute("""
 		hasiera_data date,
 		book_id integer,
 		bueltatze_data date,
-		buelatu_da integer,
+		bueltatu_da integer,
 		PRIMARY KEY (user_id, hasiera_data, book_id)
 		FOREIGN KEY(user_id) REFERENCES User(id),
 		FOREIGN KEY(book_id) REFERENCES Book(id)

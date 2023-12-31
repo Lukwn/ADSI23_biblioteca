@@ -1,5 +1,6 @@
-from model import Connection, Book, User
+from model import Connection, Book, User, Erreserba
 from model.tools import hash_password
+from datetime import date,timedelta
 
 db = Connection()
 
@@ -86,6 +87,40 @@ class LibraryController:
             for b in res
         ]
         return books, count
+
+    def getErabiltzaileErreserba(self, id):
+        res = db.select("""
+                        SELECT e.*
+                        FROM Erreserba e, User u
+                        WHERE e.user_id = u.id
+                            AND u.id = ?
+                """, (f"{id}", ))
+        Erreserbak = [
+            Erreserba(r[0], r[1], r[2], r[3], r[4])
+            for r in res
+        ]
+        return Erreserbak
+
+    def getLiburuErreserbaAktiboak(self, book_id):
+        res = db.select("""
+                        SELECT e.*
+                        FROM Erreserba e, User u, Book b
+                        WHERE e.book_id = b.id
+                            AND e.bueltatu_da = 0
+                            AND b.id = ?
+                """, (f"{book_id}", ))
+        Erreserbak = [
+            Erreserba(r[0], r[1], r[2], r[3], r[4])
+            for r in res
+        ]
+        return Erreserbak
+
+    def erreserbatu(self, id, book_id):
+        ans = db.insert("""
+                        INSERT INTO Erreserba VALUES (?, ?, ?, ?, ?)
+                """, (f"{id}", f"{date.today()}", f"{book_id}", f"{date.today() + timedelta(days=30)}", f"{0}"))
+
+
 '''
 	def search_gaiak(self, title="", limit=6, page=0):
 		count = db.select("""

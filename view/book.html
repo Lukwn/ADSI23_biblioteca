@@ -13,7 +13,10 @@
             {% if book.description: %}
             <p class="card-text">{{book.description}}</p>
             {% endif %}
-            <button type="submit" class="btn btn-primary btn-lg btn-block">
+            {% if msg %}
+            <h6 class="card-subtitle mb-2">{{msg}}</h6>
+            {% endif %}
+            <button type="submit" class="btn btn-primary btn-lg btn-block" name="erreserbatu" {% if not botoia_eskuragai %}disabled{% endif %}>
                 {{ "Erreserbatu" if 'user' in request.__dict__ and request.user and request.user.token else "Saioa hasi erreserbatzeko"
                 }}
             </button>
