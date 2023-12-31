@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container p-5 my-5 border">
+
+<form class="form-inline" method="POST">
+  <!-- Email input -->
+  <div class="input-group mb-2 mr-sm-2">
+      <label class="col-sm-2 col-form-label" for="email">Erabiltzaile ID</label>
+      <input id="id" name="id" class="form-control mb-2" />
+  </div>
+
+  <!-- Submit button -->
+  <button type="submit" class="btn btn-primary btn-block mb-4">Erreserbak ikusi</button>
+
+
+</form>
+
+</div>
+{% endblock %}

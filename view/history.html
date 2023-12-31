@@ -23,7 +23,7 @@
     <div class="list-group">
 
         {% for book in books %}
-            <div class="col-lg-4 col-md-6 col-sm-12 my-2">
+            <div class="col-12 my-2">
                 <div class="card d-flex flex-row" style="width: 100%;">
                     {% if book[0].cover: %}
                         <img src="{{book[0].cover}}" class="rounded" style="max-width: 6rem; height: fit-content;">
@@ -32,12 +32,15 @@
                         <h5 class="card-title"><a href="/book?id={{book[0].id}}">{{book[0].title}}</a></h5>
                         <h6 class="card-subtitle mb-2 text-muted">{{book[0].author}}</h6>
                         <h6 class="card-subtitle mb-2" style="color: green;">Hasiera data: {{book[1]}}</h6>
-                         {% if book[2] < data%}
-                            <h6 class="card-subtitle mb-2" style="color: red;">Bueltatze data: {{ book[2] }}</h6>
+                        {% if book[2] < data and book[3] != 1: %}
+                            <h6 class="card-subtitle mb-2" style="color: red;">Bueltatze muga: {{ book[2] }}</h6>
                             <h6 class="card-subtitle mb-2" style="color: red;">Data pasatu da! Mesedez liburua bueltatu</h6>
                         {% else %}
-                            <h6 class="card-subtitle mb-2" style="color: green;">Bueltatze data: {{ book[2] }}</h6>
+                            <h6 class="card-subtitle mb-2" style="color: green;">Bueltatze muga: {{ book[2] }}</h6>
                         {% endif %}
+                        <h6 class="card-subtitle mb-2">
+                            Egoera: {% if book[3] == 1 %} Bueltatuta {% else %} Bueltatu gabe {% endif %}
+                        </h6>
                         {% if book[0].description: %}
                         <p class="card-text">{{book[0].description}}</p>
                         {% endif %}

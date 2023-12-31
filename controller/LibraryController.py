@@ -73,7 +73,7 @@ class LibraryController:
                     AND e.book_id = b.id
         """, (f"%{title}%", f"%{author}%", f"{id}"))[0][0]
         res = db.select("""
-                SELECT b.*, e.hasiera_data, e.bueltatze_data
+                SELECT b.*, e.hasiera_data, e.bueltatze_data, e.bueltatu_da
                 FROM Book b, Author a, Erreserba e
                 WHERE b.author=a.id 
                     AND b.title LIKE ? 
@@ -84,7 +84,7 @@ class LibraryController:
                 LIMIT ? OFFSET ?
         """, (f"%{title}%", f"%{author}%", f"{id}", limit, limit * page))
         books = [
-            [Book(b[0], b[1], b[2], b[3], b[4]), b[5], datetime.strptime(b[6], "%Y-%m-%d").date()]
+            [Book(b[0], b[1], b[2], b[3], b[4]), b[5], datetime.strptime(b[6], "%Y-%m-%d").date(), b[7]]
             for b in res
         ]
         return books, count
@@ -121,28 +121,36 @@ class LibraryController:
                         INSERT INTO Erreserba VALUES (?, ?, ?, ?, ?)
                 """, (f"{id}", f"{date.today()}", f"{book_id}", f"{date.today() + timedelta(days=30)}", f"{0}"))
 
+    def search_erreserbatuta(self, user, title="", author="", limit=6, page=0):
+        count = db.select("""
+                SELECT count() 
+                FROM Book b, Author a, Erreserba e
+                WHERE b.author=a.id 
+                    AND b.title LIKE ? 
+                    AND a.name LIKE ?
+                    AND e.user_id = ?
+                    AND e.book_id = b.id
+                    AND e.bueltatu_da = 0
+        """, (f"%{title}%", f"%{author}%", f"{user}"))[0][0]
+        res = db.select("""
+                SELECT b.*, e.hasiera_data, e.bueltatze_data, e.bueltatu_da
+                FROM Book b, Author a, Erreserba e
+                WHERE b.author=a.id 
+                    AND b.title LIKE ? 
+                    AND a.name LIKE ?
+                    AND e.user_id = ?
+                    AND e.book_id = b.id
+                    AND e.bueltatu_da = 0
+                ORDER BY e.hasiera_data DESC
+                LIMIT ? OFFSET ?
+        """, (f"%{title}%", f"%{author}%", f"{user}", limit, limit * page))
+        books = [
+            [Book(b[0], b[1], b[2], b[3], b[4]), b[5], datetime.strptime(b[6], "%Y-%m-%d").date(), b[7]]
+            for b in res
+        ]
+        return books, count
 
-'''
-	def search_gaiak(self, title="", limit=6, page=0):
-		count = db.select("""
-				SELECT count() 
-				FROM GAIA G, 
-				WHERE b.author=a.id 
-					AND b.title LIKE ? 
-					AND a.name LIKE ? 
-		""", (f"%{title}%", f"%{author}%"))[0][0]
-		res = db.select("""
-				SELECT b.* 
-				FROM Book b, Author a 
-				WHERE b.author=a.id 
-					AND b.title LIKE ? 
-					AND a.name LIKE ? 
-				LIMIT ? OFFSET ?
-		""", (f"%{title}%", f"%{author}%", limit, limit*page))
-		books = [
-			Book(b[0],b[1],b[2],b[3],b[4])
-			for b in res
-		]
-		return books, count
-		
-'''
+    def liburua_bueltatu(self, user, liburu_id):
+        ans = db.update(""" 
+                                UPDATE Erreserba SET bueltatu_da = 1 WHERE user_id = ? AND book_id = ?;
+                        """, (f"{user}", f"{liburu_id}"))

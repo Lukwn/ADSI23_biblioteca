@@ -100,6 +100,30 @@ def history():
 							   total_pages=total_pages, max=max, min=min, data=data)
 	else:
 		return redirect('/login')
+@app.route('/bueltatu_erabiltzaile', methods=['GET', 'POST'])
+def bueltatu_erabiltzaile():
+	if request.method == 'POST':
+		id = request.form.get("id", "")
+		return redirect(f"/bueltatu_aukeratu?user={id}")
+	else:
+		resp = render_template('bueltatu_erabiltzaile.html')
+	return resp
+
+@app.route('/bueltatu_aukeratu', methods=['GET', 'POST'])
+def bueltatu_aukeratu():
+	user = request.values.get("user", "")
+	if request.method == 'POST':
+		liburu_id = request.form.get("liburu_id", "")
+		library.liburua_bueltatu(user=user, liburu_id=liburu_id)
+	title = request.values.get("title", "")
+	author = request.values.get("author", "")
+	page = int(request.values.get("page", 1))
+	data = date.today()
+	print(user)
+	books, nb_books = library.search_erreserbatuta(user=user, title=title, author=author, page=page - 1)
+	total_pages = (nb_books // 6) + 1
+	return render_template('bueltatu_aukeratu.html', books=books, title=title, author=author, current_page=page,
+						   total_pages=total_pages, max=max, min=min, data=data)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
