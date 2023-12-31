@@ -61,7 +61,7 @@
 
           {% if current_page-3 > 1: %}
           <li class="page-item">
-              <a class="page-link" href="{{request.path}}?title={{title}}&author={{author}}&page=1" aria-label="Previous">
+              <a class="page-link" href="{{request.path}}?id={{id}}&page=1" aria-label="Previous">
                   <span aria-hidden="true">&laquo;</span>
                   <span class="sr-only">Previous</span>
               </a>
@@ -69,12 +69,12 @@
           {% endif %}
 
         {% for page in range(max(1, current_page-3),min(total_pages+1, current_page+4)) %}
-            <li class="page-item"><a class="page-link {% if page == current_page %}active{% endif %}" href="{{request.path}}?title={{title}}&author={{author}}&page={{page}}">{{page}}</a></li>
+            <li class="page-item"><a class="page-link {% if page == current_page %}active{% endif %}" href="{{request.path}}?id={{id}}&page={{page}}">{{page}}</a></li>
         {% endfor %}
 
         {% if current_page+3 < total_pages : %}
           <li class="page-item">
-              <a class="page-link" href="{{request.path}}?title={{title}}&author={{author}}&page={{total_pages}}" aria-label="Next">
+              <a class="page-link" href="{{request.path}}?id={{id}}&page={{total_pages}}" aria-label="Next">
                   <span aria-hidden="true">&raquo;</span>
                   <span class="sr-only">Next</span>
               </a>
