@@ -1,6 +1,6 @@
 from model import Connection, Book, User, Erreserba
 from model.tools import hash_password
-from datetime import date,timedelta
+from datetime import date,timedelta, datetime
 
 db = Connection()
 
@@ -73,17 +73,18 @@ class LibraryController:
                     AND e.book_id = b.id
         """, (f"%{title}%", f"%{author}%", f"{id}"))[0][0]
         res = db.select("""
-                SELECT b.*
+                SELECT b.*, e.hasiera_data, e.bueltatze_data
                 FROM Book b, Author a, Erreserba e
                 WHERE b.author=a.id 
                     AND b.title LIKE ? 
                     AND a.name LIKE ?
                     AND e.user_id = ?
                     AND e.book_id = b.id
+                ORDER BY e.hasiera_data DESC
                 LIMIT ? OFFSET ?
         """, (f"%{title}%", f"%{author}%", f"{id}", limit, limit * page))
         books = [
-            Book(b[0], b[1], b[2], b[3], b[4])
+            [Book(b[0], b[1], b[2], b[3], b[4]), b[5], datetime.strptime(b[6], "%Y-%m-%d").date()]
             for b in res
         ]
         return books, count

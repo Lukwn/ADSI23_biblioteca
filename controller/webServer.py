@@ -93,10 +93,11 @@ def history():
 		author = request.values.get("author", "")
 		page = int(request.values.get("page", 1))
 		id = request.user.id
+		data = date.today()
 		books, nb_books = library.search_history(id=id, title=title, author=author, page=page - 1)
 		total_pages = (nb_books // 6) + 1
 		return render_template('history.html', books=books, title=title, author=author, current_page=page,
-							   total_pages=total_pages, max=max, min=min)
+							   total_pages=total_pages, max=max, min=min, data=data)
 	else:
 		return redirect('/login')
 
