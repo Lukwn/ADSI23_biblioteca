@@ -3,7 +3,7 @@
 
 {% block content %}
 <div class="container p-5 my-5 border">
-
+    <form class="form-inline" method="POST">
     <div class="d-flex flex-row">
         {% if book.cover: %}
             <img src="{{book.cover}}" class="rounded" style="max-width: 6rem; height: fit-content; margin-right: 1rem">
@@ -11,17 +11,28 @@
             <img src="https://www.articulosreligiosospeinado.com/es/images/NOportada.jpg" class="rounded" style="max-width: 7rem; height: fit-content; margin-right: 1rem">
         {% endif%}
         <div class="card-body">
-            <h5 class="card-title"><a href="/book?id={{book.id}}">{{book.title}}</a></h5>
+            <h5 class="card-title">{{book.title}}</h5>
             <h6 class="card-subtitle mb-2 text-muted">{{book.author}}</h6>
             {% if book.description: %}
                 <p class="card-text">{{book.description}}</p>
             {% endif %}
+            <!-- ERRESERBA -->
+            {% if msg %}
+            <h6 class="card-subtitle mb-2">{{msg}}</h6>
+            {% endif %}
+            <button type="submit" class="btn btn-primary btn-lg btn-block" name="erreserbatu" {% if not botoia_eskuragai %}disabled{% endif %}>
+                {{ "Erreserbatu" if 'user' in request.__dict__ and request.user and request.user.token else "Saioa hasi erreserbatzeko"
+                }}
+            </button>
+            </div>
         </div>
+        </form>
     </div>
     {% if 'user' in request.__dict__ and request.user and request.user.token: %}
         <h4 style="margin-top: 2rem; margin-bottom: 1rem">ERRESEINAK</h4>
         <!-- ERRESEINA IDATZI -->
         {% if not user_erreseina %}
+            {% if erreseina_ahal_du %}
             <div class="userCard">
                 <div class="card d-flex flex-row" style="width: 76.4rem;">
                     <div class="card-body" style="justify-content: center; align-items: center;">
@@ -32,8 +43,11 @@
                             </div>
                             <div class="input-group mb-2 mr-sm-2">
                                 <label for="author" class="col-sm-2 col-form-label">Iruzkina:</label>
-                                <input type="text" class="form-control mb-2" id="iruzkina" name="iruzkina" placeholder="adibide testua" {% if iruzkina %}value="{{iruzkina}}"{% endif %}>
+                                <input type="text" class="form-control mb-2" id="iruzkina" name="iruzkina" placeholder="max 1000 karaktere" {% if iruzkina %}value="{{iruzkina}}"{% endif %}>
                             </div>
+                            {% if msg_erreseina %}
+                            <h6 class="card-subtitle mb-2"><a style="color:red;">{{msg_erreseina}}</a></h6>
+                            {% endif %}
                             <button type="submit" class="btn btn-primary">
                                 Publikatu
                             </button>
@@ -41,6 +55,10 @@
                     </div>
                 </div>
             </div>
+            {%else%}
+            <h6 class="card-subtitle mb-2">Ezin duzu erreseinak idatzi liburua irakurri arte</h6>
+            {% endif %}
+
         {% endif %}
 
         <div class="row">
@@ -55,6 +73,9 @@
                         <!-- Botoia -->
                         <form class="form-inline" method="POST">
                             <input type="hidden" name="editable" value=True>
+                            {% if msg_erreseina %}
+                            <h6 class="card-subtitle mb-2"><a style="color:red;">{{msg_erreseina}}</a></h6>
+                            {% endif %}
                             <button type="submit" class="btn btn-primary">
                                 Editatu
                             </button>

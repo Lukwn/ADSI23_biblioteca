@@ -2,6 +2,7 @@ import string
 
 from .LibraryController import LibraryController
 from flask import Flask, render_template, request, redirect
+from datetime import date, datetime
 
 app = Flask(__name__, static_url_path='', static_folder='../view/static', template_folder='../view/')
 
@@ -148,39 +149,76 @@ def onartu(id):
 
 @app.route('/book', methods=['GET', 'POST'])
 def book():
+	#ERRESERBAK
+	id = request.values.get("id", "")
+	book = library.get_book(id=id)
+	msg = None
+	botoia_eskuragai = True
+	liburu_erreserbak = library.getLiburuErreserbaAktiboak(book_id=book.id)
+	if len(liburu_erreserbak) == 0:
+		if request.method == 'POST':
+			if "erreserbatu" in request.form:
+				if 'user' in request.__dict__ and request.user and request.user.token:
+					id = request.user.id
+					erab_erreserbak = library.getErabiltzaileErreserba(id=id)
+					ahal_du = True
+					for erreserba in erab_erreserbak:
+						erreserba_data = datetime.strptime(erreserba.bueltatze_data, "%Y-%m-%d").date()
+						if erreserba_data < date.today() and erreserba.bueltatu_da == 0:
+							msg = "Erreserbatu duzun liburu baten denbora-muga pasatu da eta ez duzu bueltatu, ezin dituzu liburu gehiago erreserbatu."
+							ahal_du = False
+							botoia_eskuragai = False
+							break
+					if ahal_du:
+						library.erreserbatu(id=id, book_id=book.id)
+						botoia_eskuragai = False
+						msg = "Liburua erreserbatu duzu."
+				else:
+					return redirect("/login")
+	else:
+		msg = "Ez dago liburuaren kopiarik eskuragai."
+		botoia_eskuragai = False
+
+	#ERRESEINAK
+	book_id = id
 	edit= False
-
+	msg_erreseina = None
 	if request.method == 'POST':
-		editable = request.form.get("editable", "")
-		editing = request.form.get("editing", "")
-		if (editable == 'True'):
-			edit=True
-		elif (editing == 'True'):
-			user_id = request.user.id
-			book_id = request.values.get("id", "")
-			# erreseina
-			izarKop = int(request.form.get("izarKop", 0))
-			iruzkina = request.form.get("iruzkina", "")
-			# baldintzak
+		user_id = request.user.id
+		izarKop = request.form.get("izarKop", 0)
+		iruzkina = request.form.get("iruzkina", "")
+		# baldintzak
+		if izarKop:
+			izarKop = int(izarKop)
 			if 0 <= izarKop <= 10 and len(iruzkina) <= 1000:
-				library.edit_erreseina(user_id=user_id, book_id=book_id, izarKop=izarKop, iruzkina=iruzkina)
-		else:
-			user_id = request.user.id
-			book_id = request.values.get("id", "")
-			#erreseina
-			izarKop = int(request.form.get("izarKop", 0))
-			iruzkina = request.form.get("iruzkina", "")
-			# baldintzak
-			if 0 <= izarKop <= 10 and len(iruzkina) <= 1000:
-				library.add_erreseina(user_id=user_id, book_id=book_id, izarKop=izarKop, iruzkina=iruzkina)
+				# edit/add
+				editing = request.form.get("editing", "")
+				if (editing == 'True'):
+					library.edit_erreseina(user_id=user_id, book_id=book_id, izarKop=izarKop, iruzkina=iruzkina)
+				else:
+					library.add_erreseina(user_id=user_id, book_id=book_id, izarKop=izarKop, iruzkina=iruzkina)
+			elif izarKop > 10 or izarKop < 0:
+				msg_erreseina = "Izar kopurua 0 eta 10 artean egon behar da"
+			else:
+				msg_erreseina = "Iruzkina ezin ditu 1000 karaktere baino gehiago izan"
 
+		else:
+			msg_erreseina = "Izar kopurua adierazi mesedez"
+
+
+		# editatzeko botoia sakatzean
+		editable = request.form.get("editable", "")
+		if (editable == 'True'):
+			edit = True
+
+
+	#erreseinak erakutsi
 	if 'user' in dir(request) and request.user and request.user.token:
 		user_id = request.user.id
+		erreseina_ahal_du = library.erreseinatu_ahal_du(user_id=user_id, book_id=book_id)
 	else:
 		user_id = 0
 
-	id = request.values.get("id", "")
-	book = library.get_book(id=id)
 	erreseinak, count = library.get_erreseinak(id=id, user_id=user_id)
 	user_erreseina = library.get_user_erreseina(id=id, user_id=user_id)
 	page = int(request.values.get("page", 1))
@@ -190,9 +228,52 @@ def book():
 		# existitzekotan informazioa gorde
 		user_erreseina = user_erreseina[0]
 
-	return render_template('book.html', book=book, erreseinak=erreseinak, user_erreseina=user_erreseina, edit=edit,
+	return render_template('book.html', book=book, erreseinak=erreseinak, user_erreseina=user_erreseina, erreseina_ahal_du=erreseina_ahal_du, edit=edit, msg=msg, msg_erreseina=msg_erreseina, botoia_eskuragai=botoia_eskuragai,
 							   current_page=page,
 							   total_pages=total_pages, max=max, min=min)
+
+
+@app.route('/history')
+def history():
+	if 'user' in request.__dict__ and request.user and request.user.token:
+		title = request.values.get("title", "")
+		author = request.values.get("author", "")
+		page = int(request.values.get("page", 1))
+		id = request.user.id
+		data = date.today()
+		books, nb_books = library.search_history(id=id, title=title, author=author, page=page - 1)
+		total_pages = (nb_books // 6) + 1
+		return render_template('history.html', books=books, title=title, author=author, current_page=page,
+							   total_pages=total_pages, max=max, min=min, data=data)
+	else:
+		return redirect('/login')
+@app.route('/bueltatu_erabiltzaile', methods=['GET', 'POST'])
+def bueltatu_erabiltzaile():
+	if request.method == 'POST':
+		id = request.form.get("id", "")
+		return redirect(f"/bueltatu_aukeratu?user={id}")
+	else:
+		resp = render_template('bueltatu_erabiltzaile.html')
+	return resp
+
+@app.route('/bueltatu_aukeratu', methods=['GET', 'POST'])
+def bueltatu_aukeratu():
+	user = request.values.get("user", "")
+	if request.method == 'POST':
+		liburu_id = request.form.get("liburu_id", "")
+		library.liburua_bueltatu(user=user, liburu_id=liburu_id)
+	title = request.values.get("title", "")
+	author = request.values.get("author", "")
+	page = int(request.values.get("page", 1))
+	data = date.today()
+	print(user)
+	books, nb_books = library.search_erreserbatuta(user=user, title=title, author=author, page=page - 1)
+	total_pages = (nb_books // 6) + 1
+	return render_template('bueltatu_aukeratu.html', books=books, title=title, author=author, current_page=page,
+						   total_pages=total_pages, max=max, min=min, data=data)
+
+
+
 
 
 @app.route('/login', methods=['GET', 'POST'])

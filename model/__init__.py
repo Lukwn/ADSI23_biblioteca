@@ -6,3 +6,4 @@ from .Erreseina import Erreseina
 from .Gaia import Gaia
 from .Eskaera import Eskaera
 from .Komentario import Komentario
+from .Erreserba import Erreserba
