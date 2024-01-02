@@ -162,3 +162,10 @@ for k in komentarioak:
 		"INSERT INTO Komentario (id, gaia_id, user_id, txt, respondiendo_a, respondiendo_a_txt) VALUES (?, ?, ?, ?, ?, ?)",
 		(k['id'], k['gaia_id'], k['user_id'], k['txt'], k['respondiendo_a'], k['respondiendo_a_txt']))
 	con.commit()
+
+#### Insert erreserbak
+with open('../erreserbak.json', 'r') as f:
+	erreserbak = json.load(f)['erreserbak']
+for erreserba in erreserbak:
+	cur.execute(f"""INSERT INTO Erreserba VALUES ('{erreserba['user_id']}', '{erreserba['hasiera_data']}', '{erreserba['book_id']}', '{erreserba['bueltatze_data']}', '{erreserba['bueltatu_da']}')""")
+	con.commit()
