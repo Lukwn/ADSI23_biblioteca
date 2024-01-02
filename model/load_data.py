@@ -49,7 +49,7 @@ cur.execute("""
 	)
 """)
 
-cur.execute("""
+cur.execute("""	
 	CREATE TABLE Eskaera(
 		EID1 integer,
 		EID2 integer,
@@ -86,6 +86,18 @@ cur.execute("""
 		FOREIGN KEY(gaia_id) REFERENCES Gaia(id),
 		FOREIGN KEY(user_id) REFERENCES User(id),
 		FOREIGN KEY(respondiendo_a) REFERENCES User(id)
+	)
+""")
+
+cur.execute("""
+	CREATE TABLE Erreseina(
+		user_id  integer,
+		book_id  integer,
+		izarKop  integer,
+		iruzkina varchar(1000),
+		PRIMARY KEY (user_id, book_id),
+		FOREIGN KEY (user_id) REFERENCES User (id),
+		FOREIGN KEY (book_id) REFERENCES Book (id)
 	)
 """)
 
