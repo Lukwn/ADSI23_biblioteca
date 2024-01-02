@@ -328,7 +328,9 @@ def gaia():
 		if request.form.get("respondiendo") == "true":
 			respondiendo_a = request.form.get("respondiendo_a")
 			respondiendo_a_txt = request.form.get("respondiendo_a_txt")
-		library.add_komentario(id, user_id, request.form.get("txt", ""), respondiendo_a, respondiendo_a_txt)
+		txt = request.form.get("txt", "")
+		if txt != "":
+			library.add_komentario(id, user_id, txt, respondiendo_a, respondiendo_a_txt)
 	komentarioak, count = library.search_komentarioak(id, page=page - 1)
 	total_pages = (count // 6) + 1
 	return render_template('gaia.html', komentarioak=komentarioak, gaia=gaia, id=id, izena=gaia.izena,
