@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<div class="container p-5 my-5 border">
+
+
+<form class="form-inline" method="POST">
+
+
+   <h5>Liburu berriaren datuak</h5>
+   {% if message %}
+   <div class="alert alert-success" role="alert">
+       {{ message }}
+   </div>
+   {% endif %}
+    {% if error_message_book %}
+   <div class="alert alert-danger" role="alert">
+       {{ error_message_book }}
+   </div>
+   {% endif %}
+   <!-- title input -->
+ <div class="input-group mb-2 mr-sm-2">
+     <label class="col-sm-2 col-form-label" for="title">Titulua</label>
+     <input type="text" id="title" name="title" class="form-control mb-2"  maxlength="50" required/>
+ </div>
+
+
+   <!-- author input -->
+ <div class="input-group mb-2 mr-sm-2">
+     <label class="col-sm-2 col-form-label" for="author">Idazlea</label>
+     <input type="text" id="author" name="author" class="form-control mb-2" maxlength="40" required/>
+ </div>
+
+
+ <!-- description input -->
+ <div class="input-group mb-2 mr-sm-2">
+     <label class="col-sm-2 col-form-label" for="description">Deskribapena </label>
+     <input type="text" id="description" name="description" class="form-control mb-2" required/>
+ </div>
+
+
+ <!-- cover input -->
+ <div class="input-group mb-2 mr-sm-2">
+     <label class="col-sm-2 col-form-label" for="cover">Portada</label>
+     <input type="url" id="cover" name="cover" class="form-control mb-2" maxlength="50" placeholder="https:// ... .jpg" />
+ </div>
+
+
+
+
+ <!-- Submit button -->
+ <button type="submit" class="btn btn-primary btn-block mb-4">Liburua sartu</button>
+
+
+</form>
+
+
+</div>
+{% endblock %}

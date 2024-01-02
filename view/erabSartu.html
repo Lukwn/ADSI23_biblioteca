@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<div class="container p-5 my-5 border">
+<form class="form-inline" method="POST">
+   <h5>Erabiltzailea sortu</h5>
+   <!-- username input -->
+   {% if error_message %}
+   <div class="alert alert-danger" role="alert">
+       {{ error_message }}
+   </div>
+   {% endif %}
+
+   {% if message %}
+   <div class="alert alert-success" role="alert">
+       {{ message }}
+   </div>
+    {% endif %}
+ <div class="input-group mb-2 mr-sm-2">
+     <label class="col-sm-2 col-form-label" for="username">Kontuaren izena</label>
+     <input type="text" id="username" name="username" class="form-control mb-2" maxlength="20" required />
+ </div>
+       <!-- firstname input -->
+ <div class="input-group mb-2 mr-sm-2">
+     <label class="col-sm-2 col-form-label" for="firstname">Izena</label>
+     <input type="text" id="firstname" name="firstname" class="form-control mb-2" maxlength="20" required />
+ </div>
+
+
+      <!-- lastname input -->
+ <div class="input-group mb-2 mr-sm-2">
+     <label class="col-sm-2 col-form-label" for="lastname">Abizena</label>
+     <input type="text" id="lastname" name="lastname" class="form-control mb-2" maxlength="50" required />
+ </div>
+       <!-- phone input -->
+<div class="input-group mb-2 mr-sm-2">
+   <label class="col-sm-2 col-form-label" for="phone">Telefonoa</label>
+   <input type="tel" id="phone" name="phone" class="form-control mb-2" pattern="[0-9]{9}" placeholder="000000000" required />
+</div>
+ <!-- Email input -->
+ <div class="input-group mb-2 mr-sm-2">
+     <label class="col-sm-2 col-form-label" for="email">Email</label>
+     <input type="email" id="email" name="email" class="form-control mb-2" maxlength="30" required />
+ </div>
+
+
+ <!-- Password input -->
+ <div class="input-group mb-2 mr-sm-2">
+     <label class="col-sm-2 col-form-label" for="password">Pasahitza</label>
+     <input type="password" id="password" name="password" class="form-control mb-2" maxlength="32" required />
+ </div>
+
+
+   <!-- Baimenak input -->
+
+
+   <div class="input-group mb-2 mr-sm-2">
+   <label class="col-sm-2 col-form-label" for="baimenak">Administratzailea da</label>
+   <input type="checkbox" id="baimenak" name="baimenak" class="form-check-input" />
+   </div>
+
+
+   <div class="row">
+       <label class="col-sm-2 col-form-label">Irudia</label>
+       {% for picture in pictures %}
+           <div class="col-md-2 mb-3">
+               <label class="d-block">
+                   <input type="radio" name="picture" value="{{ picture.id }}" required>
+                   <img src="{{ picture.link }}" class="img-fluid rounded">
+               </label>
+           </div>
+       {% endfor %}
+   </div>
+   <!-- Submit button -->
+ <button type="submit" class="btn btn-primary btn-block mb-4">Sortu</button>
+
+
+
+
+</form>
+
+
+</div>
+{% endblock %}

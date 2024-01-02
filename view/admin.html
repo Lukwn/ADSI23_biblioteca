@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<div class="container p-5 my-5 border">
+
+
+ <div class="userCard">
+   <div class="card d-flex flex-row" style="width: 76.4rem; justify-content: center; align-items: center;">
+       <div class="card-body text-center">
+           <li class="nav-item list-unstyled">
+               <a href="/erabEzab" class="nav-link {% if request.path == '/erabEzab' %}active{% endif %}"><h5>Erabiltzailea ezabatu</h5></a>
+           </li>
+       </div>
+   </div>
+</div>
+<div class="userCard">
+   <div class="card d-flex flex-row" style="width: 76.4rem; justify-content: center; align-items: center;">
+       <div class="card-body text-center">
+           <li class="nav-item list-unstyled">
+               <a href="/erabSartu" class="nav-link {% if request.path == '/erabSartu' %}active{% endif %}"><h5>Erabiltzaile berria sartu</h5></a>
+           </li>
+       </div>
+   </div>
+</div>
+<div class="userCard">
+   <div class="card d-flex flex-row" style="width: 76.4rem; justify-content: center; align-items: center;">
+       <div class="card-body text-center">
+           <li class="nav-item list-unstyled">
+               <a href="/libBerria" class="nav-link {% if request.path == '/libBerria' %}active{% endif %}"><h5>Liburu berria sartu</h5></a>
+           </li>
+       </div>
+   </div>
+</div>
+
+
+</div>
+{% endblock %}

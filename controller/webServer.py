@@ -1,5 +1,8 @@
 import string
 import random
+
+from setuptools.extension import Library
+
 from .LibraryController import LibraryController
 from flask import Flask, render_template, request, redirect
 from datetime import date, datetime
@@ -368,3 +371,79 @@ def gomendio():
 			gomendioak= library.getBerriak(gomendioak=gomendioak, idUser=idUser)
 
 	return render_template('gomendio.html', gomendioak=gomendioak)
+
+@app.route('/admin')
+def admin():
+   return render_template('admin.html')
+
+
+@app.route('/erabEzab', methods=['GET', 'POST'])
+def erabEzab():
+  message = None
+  error_message = None
+  if request.method == 'POST':
+     if request.form.get('submit_button') == 'sartu':
+        username = request.form.get("erabiltzailea", "")
+        if username == request.user.username:
+           error_message = "Zure administratzaile kontua borratzeko beste administratzaile bat egin behar du"
+        else:
+          library.ezabatu_erab(username)
+          message = username + " ondo ezabatu da."
+     elif request.form.get('submit_button') == 'search':
+        username = request.form.get("username", "")
+        email = request.form.get("email", "")
+        erabs = library.bilatu_erabs(username, email)
+        return render_template('erabEzab.html', erabs=erabs, message=message, error_message=error_message)
+  erabs = library.get_all_erab()
+  return render_template('erabEzab.html', erabs=erabs, message=message, error_message=error_message)
+
+@app.route('/erabSartu', methods=['GET', 'POST'])
+def erabSartu():
+
+   error_message = None
+   message= None
+   exist=False
+   exist_email = False
+   if request.method == 'POST':
+      username = request.form.get("username", "")
+      exist = library.existitzen_da_username(username)
+      if exist[0][0] == 1:
+         error_message = "Mesedez kontuari beste izen bat jarri, "+username+" jadanik hartuta dago."
+         pictures = library.get_all_pictures()
+         return render_template('erabSartu.html', pictures=pictures, error_message=error_message)
+      else:
+         email = request.form.get("email", "")
+         exist_email = library.existitzen_da_email(email)
+         if exist_email[0][0] == 1:
+            error_message = "Mesedez kontuari beste email bat jarri, hori jadanik hartuta dago."
+            pictures = library.get_all_pictures()
+            return render_template('erabSartu.html', pictures=pictures, error_message=error_message)
+         else:
+            password = request.form.get("password", "")
+            firstname = request.form.get("firstname", "")
+            lastnames = request.form.get("lastname", "")
+            picture = int(request.form.get("picture", 0))
+            phone = int(request.form.get("phone", 0))
+            baimenak = request.form.get("baimenak", False) == "on"
+            library.add_user(username, email, password, firstname, lastnames, picture, phone, baimenak)
+            message = username+" ondo sortu da."
+   pictures = library.get_all_pictures()
+   return render_template('erabSartu.html', pictures=pictures, error_message=error_message, message=message)
+
+@app.route('/libBerria', methods=['GET', 'POST'])
+def libBerria():
+   error_message_book = None
+   message = None
+   if request.method == 'POST':
+      title = request.form.get("title", "")
+      author = request.form.get("author", "")
+      dago = library.existitzen_da_liburua(title, author)
+      if dago[0][0] == 1:
+         error_message_book = "Liburu hori jadanik dago liburutegian"
+      else:
+         description= request.form.get("descrition", "")
+         cover = request.form.get("cover", "")
+         authorZenb = library.add_author(author)
+         library.add_liburua(title, authorZenb[0][0], description, cover)
+         message = title+" ondo sortu da."
+   return render_template('libBerria.html', error_message_book=error_message_book, message=message)

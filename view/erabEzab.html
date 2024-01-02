@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<div class="container p-5 my-5 border">
+
+
+<form class="form-inline" method="POST">
+
+
+    {% if error_message %}
+   <div class="alert alert-danger" role="alert">
+       {{ error_message }}
+   </div>
+   {% endif %}
+   <h5>Erabiltzailea ezabatu</h5>
+
+
+   <div class="input-group mb-2 mr-sm-2">
+     <label class="col-sm-2 col-form-label" for="username">Kontuaren izena</label>
+     <input type="text" id="username" name="username" class="form-control mb-2" />
+   </div>
+
+
+   <div class="input-group mb-2 mr-sm-2">
+     <label class="col-sm-2 col-form-label" for="email">Email</label>
+     <input type="text" id="email" name="email" class="form-control mb-2" />
+   </div>
+
+
+   <button type="submit"  class="btn btn-primary btn-block mb-4" name="submit_button" value="search">Bilatu</button>
+
+
+   <div class="input-group mb-2 mr-sm-2">
+   <label class="col-sm-2 col-form-label" for="erabiltzailea">Erabiltzailea</label>
+   <select id="erabiltzailea" name="erabiltzailea" class="form-control mb-2">
+       {% for erabiltzailea in erabs %}
+           <option value="{{ erabiltzailea.username }}">{{ erabiltzailea.username }}  |  {{ erabiltzailea.email }}</option>
+       {% endfor %}
+   </select>
+   </div>
+
+
+ <!-- Submit button -->
+ <button type="submit"  class="btn btn-primary btn-block mb-4" name="submit_button" value="sartu">Erabiltzailea ezabatu</button>
+
+
+</form>
+{% if message %}
+   <div class="alert alert-success" role="alert">
+       {{ message }}
+   </div>
+{% endif %}
+</div>
+{% endblock %}

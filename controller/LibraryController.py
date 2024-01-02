@@ -1,5 +1,7 @@
 from model import Connection, Book, User, Erreseina, Gaia, Komentario, Erreserba
 from flask import request
+
+from model.Pictures import Pictures
 from model.tools import hash_password
 from datetime import date,timedelta, datetime
 
@@ -482,3 +484,48 @@ class LibraryController:
             for b in res
         ]
         return libs
+
+    def get_all_erab(self):
+        res = db.select("SELECT username, email FROM User")
+        erabs = [{"username": user[0], "email": user[1]} for user in res]
+        return erabs
+
+    def get_all_pictures(self):
+        res = db.select("SELECT * FROM Pictures")
+        pictures = [Pictures(*pictures) for pictures in res]
+        return pictures
+
+    def existitzen_da_username(self, username):
+        return db.select("SELECT EXISTS (SELECT 1 FROM User WHERE username = ? )", (username,))
+
+    def existitzen_da_email(self, email):
+        return db.select("SELECT EXISTS (SELECT 1 FROM User WHERE email = ? )", (email,))
+
+    def existitzen_da_liburua(self, title, author):
+        return db.select(
+            "SELECT EXISTS (SELECT 1 FROM Book b, Author a WHERE b.author=a.id and title = ? and a.name = ?)",
+            (title, author,))
+
+    def ezabatu_erab(self, username):
+        user = db.select("SELECT id FROM User WHERE username = ?", (username,))
+        db.delete("DELETE FROM Eskaera WHERE EID1 = ? OR EID2 = ?", (user[0][0], user[0][0]))
+        db.delete("DELETE FROM User WHERE username = ?", (username,))
+
+    def add_liburua(self, title, author, description, cover):
+        db.insert("INSERT INTO Book (title, author, description, cover) VALUES (?,?,?,?)",
+                  (title, author, description, cover,))
+
+    def add_author(self, author):
+        db.insert("INSERT INTO Author (name) VALUES (?);", (author,))
+        return db.select("SELECT last_insert_rowid() as id")
+
+    def add_user(self, username, email, password, firstname, lastnames, picture, phone, baimenak):
+        db.insert(
+            "INSERT INTO User(username, email, password, firstname, lastnames, picture, phone, baimenak) VALUES (?,?,?,?,?,?,?,?);",
+            (username, email, hash_password(password), firstname, lastnames, picture, phone, baimenak,))
+
+    def bilatu_erabs(self, username, email):
+        res = db.select("SELECT username, email FROM User where username LIKE ? and email LIKE ?;",
+                        (f"%{username}%", f"%{email}%",))
+        erabs = [{"username": user[0], "email": user[1]} for user in res]
+        return erabs
