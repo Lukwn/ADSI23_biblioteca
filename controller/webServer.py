@@ -1,5 +1,5 @@
 import string
-
+import random
 from .LibraryController import LibraryController
 from flask import Flask, render_template, request, redirect
 from datetime import date, datetime
@@ -350,3 +350,19 @@ def foro_info():
 	gaiak, nb_gaiak = library.search_gaiak(izena=izena, page=page - 1)
 	total_pages = (nb_gaiak // 6) + 1
 	return izena, page, gaiak, nb_gaiak, total_pages
+
+@app.route('/gomendio', methods=['GET','POST'])
+def gomendio():
+	if request.method== 'GET':
+		title= request.values.get("title","")
+		author= request.values.get("author","")
+		idUser= request.user.id
+		lagunak, plagunak, nlagunak= library.search_lagunak(idUser)
+		if nlagunak<=0:
+			zenb=random.randrange(0,1000)
+			gomendioak, ngomendioak= library.search_books(title=title, author=author, page=zenb)
+		else:
+			gomendioak= library.getGomendioak(idUser=idUser)
+			gomendioak= library.getBerriak(gomendioak=gomendioak, idUser=idUser)
+
+	return render_template('gomendio.html', gomendioak=gomendioak)

@@ -439,3 +439,46 @@ class LibraryController:
         ans = db.update(""" 
                                 UPDATE Erreserba SET bueltatu_da = 1 WHERE user_id = ? AND book_id = ?;
                         """, (f"{user}", f"{liburu_id}"))
+
+    def get_lagunak_ids(self, id=0):
+        res = db.select("""
+                      SELECT *
+                      FROM Eskaera
+                      WHERE (EID1=? OR EID2=?) AND baieztatuta=1
+                """, (id, id))
+        lagunak = [
+            e[0] if e[0] != id else e[1]
+            for e in res
+        ]
+        return lagunak
+
+    def getGomendioak(self, idUser=0):
+
+        lag = self.get_lagunak_ids(idUser)
+
+        consulta_sql = f"SELECT b.* FROM Erreseina e, Book b WHERE e.user_id IN ({', '.join(map(str, lag))}) AND e.izarKop>=6 AND b.id=e.book_id "
+
+        res = db.select(consulta_sql)
+
+        books = [
+            Book(b[0], b[1], b[2], b[3], b[4])
+            for b in res
+        ]
+
+        return books
+
+    def getBerriak(self,gomendioak,idUser):
+
+        books = [
+            b.id
+            for b in gomendioak
+        ]
+
+        consulta_sql = f"SELECT b.* FROM Book b, Erreserba e WHERE b.id IN ({', '.join(map(str, books))}) AND e.book_id=b.id AND e.user_id!={idUser}"
+        res = db.select(consulta_sql)
+
+        libs = [
+            Book(b[0], b[1], b[2], b[3], b[4])
+            for b in res
+        ]
+        return libs
