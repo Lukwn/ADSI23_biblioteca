@@ -341,7 +341,7 @@ def gaia():
 def add_gaia():
 	if request.method == 'POST':
 		string.izena = request.form.get("izena", "")
-		if len(string.izena) <= 50:
+		if len(string.izena) <= 50 and string.izena != "":
 			library.add_gaia(string.izena)
 			"""izena, page, gaiak, nb_gaiak, total_pages = foro_info()
 			return render_template('foro.html', gaiak=gaiak, izena=izena, current_page=page,
