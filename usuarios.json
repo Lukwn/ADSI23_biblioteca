@@ -12,6 +12,17 @@
       "baimenak": 1
     },
     {
+      "id": 2,
+      "username": "DoeJn",
+      "email": "jhon@gmail.com",
+      "password": "123",
+      "firstname": "Jhon",
+      "lastnames": "Doe",
+      "picture": 2,
+      "phone": 312321321,
+      "baimenak": 0
+    },
+    {
       "id": 3,
       "username": "Ejemplo1",
       "email": "ejemplo@gmail.com",
