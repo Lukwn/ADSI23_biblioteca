@@ -17,7 +17,8 @@ class LibraryController:
             cls.__instance.__initialized = False
         return cls.__instance
 
-##Liburuak eta katalogoa
+    ##-----------------------------------------------------------------------------------------------------------
+    ##Liburuak eta katalogoa
     def search_books(self, title="", author="", limit=6, page=0):
         count = db.select("""
                 SELECT count() 
@@ -40,6 +41,12 @@ class LibraryController:
         ]
         return books, count
 
+    def findBook(self, id):
+        b = db.select("SELECT * FROM Book WHERE id=?", (id,))
+        return Book(b[0][0], b[0][1], b[0][2], b[0][3], b[0][4])
+
+    ##-----------------------------------------------------------------------------------------------------------
+    # Gaiak eta komentarioak
     def search_gaiak(self, izena="", limit=6, page=0):
         count = db.select("""
     			SELECT count() 
@@ -89,17 +96,9 @@ class LibraryController:
     def add_komentario(self, gaia_id, user_id, txt, respondiendo_a, respondiendo_a_txt):
         db.insert("INSERT INTO Komentario (gaia_id, user_id, txt, respondiendo_a, respondiendo_a_txt) VALUES (?, ?, ?, ?, ?)",
             (gaia_id, user_id, txt, respondiendo_a, respondiendo_a_txt,))
-    def get_book(self, id):
-        b = db.select("""
-                        SELECT Book.*
-                        FROM Book
-                        WHERE Book.id = ?
-                """, (id,))
-        tupla = b[0]
-        book = Book(tupla[0],tupla[1],tupla[2],tupla[3],tupla[4])
-        return book
 
-##Erabiltzailea sartzeko orduan
+    ##-----------------------------------------------------------------------------------------------------------
+    ##Login egiteko beharrezkoak
     def get_user(self, email, password):
         user = db.select("SELECT * from User WHERE email = ? AND password = ?", (email, hash_password(password)))
         if len(user) > 0:
@@ -115,7 +114,8 @@ class LibraryController:
         else:
             return None
 
-##Lagun sarea eta erabiltzelieen profila
+    ##-----------------------------------------------------------------------------------------------------------
+    ##Lagun sarea eta erabiltzalieen profila
     def search_lagunak(self, id=0, limit=10, page=0):
         count = db.select("""
                        SELECT count()
@@ -133,8 +133,8 @@ class LibraryController:
             for e in res
         ]
         pictures = [
-            self.get_picture(pictureId.picture)
-            for pictureId in lagunak
+            self.get_picture(user.picture)
+            for user in lagunak
         ]
         return lagunak, pictures, count
 
@@ -199,12 +199,13 @@ class LibraryController:
             for u in res
         ]
         pictures = [
-            self.get_picture(pictureId.picture)
-            for pictureId in users
+            self.get_picture(user.picture)
+            for user in users
         ]
         return users, pictures, count
 
-## Eskaerak
+    ##-----------------------------------------------------------------------------------------------------------
+    ## Eskaerak
     def get_bidalitakoEskaerak(self, limit=5, page=0):
         count = db.select("""
                                SELECT count()
@@ -222,8 +223,8 @@ class LibraryController:
             for e in res
         ]
         pictures = [
-            self.get_picture(pictureId.picture)
-            for pictureId in bidali
+            self.get_picture(user.picture)
+            for user in bidali
         ]
         return bidali, pictures, count
 
@@ -244,8 +245,8 @@ class LibraryController:
             for e in res
         ]
         pictures = [
-            self.get_picture(pictureId.picture)
-            for pictureId in jaso
+            self.get_picture(user.picture)
+            for user in jaso
         ]
         return jaso, pictures, count
 
@@ -259,7 +260,8 @@ class LibraryController:
     def gehituLagun(self, id):
         db.insert("INSERT INTO Eskaera VALUES (?,?,false)", (request.user.id, id))
 
-
+    ##-----------------------------------------------------------------------------------------------------------
+    ##Erreseinak
     def erreseinatu_ahal_du(self, user_id=0, book_id=0):
         erreseina_ahal_du = False
         err = db.select("""
@@ -269,7 +271,6 @@ class LibraryController:
             """, (user_id,book_id))
         if err != []:
             erreseina_ahal_du= True
-        print(erreseina_ahal_du)
         return erreseina_ahal_du
 
     def get_erreseinak(self, id=0, user_id=0, limit=20, page=0):
@@ -331,10 +332,6 @@ class LibraryController:
         ]
         return user_erreseina, books, count
 
-    def findBook(self, id):
-        b = db.select("SELECT * FROM Book WHERE id=?", (id,))
-        return Book(b[0][0], b[0][1], b[0][2], b[0][3], b[0][4])
-
     def add_erreseina(self, user_id, book_id, izarKop, iruzkina):
         db.insert("""
             INSERT INTO Erreseina (user_id, book_id, izarKop, iruzkina)
@@ -349,6 +346,8 @@ class LibraryController:
             WHERE user_id = ? AND book_id = ?
         """, (izarKop, iruzkina, user_id, book_id))
 
+    ##-----------------------------------------------------------------------------------------------------------
+    ##Historiala
     def search_history(self, id, title="", author="", limit=6, page=0):
         count = db.select("""
                 SELECT count() 
@@ -376,6 +375,8 @@ class LibraryController:
         ]
         return books, count
 
+    ##-----------------------------------------------------------------------------------------------------------
+    ##Erreserbak
     def getErabiltzaileErreserba(self, id):
         res = db.select("""
                         SELECT e.*
@@ -389,6 +390,27 @@ class LibraryController:
         ]
         return Erreserbak
 
+    def getErabiltzaileErreserbaAktiboak(self, id, limit=5, page=0):
+        count = db.select("""
+                      SELECT count()
+                      FROM Erreserba
+                      WHERE user_id = ? AND bueltatu_da = 0
+                    """, (id,))[0][0]
+        res = db.select("""
+                      SELECT *
+                      FROM Erreserba
+                      WHERE user_id = ? AND bueltatu_da = 0
+                      LIMIT ? OFFSET ?
+                    """, (id, limit, limit * page))
+        erreserbak = [
+            Erreserba(err[0], err[1], err[2], err[3], err[4])
+            for err in res
+        ]
+        books = [
+            self.findBook(e.book_id)
+            for e in erreserbak
+        ]
+        return erreserbak, books, count
     def getLiburuErreserbaAktiboak(self, book_id):
         res = db.select("""
                         SELECT e.*
@@ -397,11 +419,11 @@ class LibraryController:
                             AND e.bueltatu_da = 0
                             AND b.id = ?
                 """, (f"{book_id}",))
-        Erreserbak = [
+        erreserbak = [
             Erreserba(r[0], r[1], r[2], r[3], r[4])
             for r in res
         ]
-        return Erreserbak
+        return erreserbak
 
     def erreserbatu(self, id, book_id):
         ans = db.insert("""
@@ -442,6 +464,8 @@ class LibraryController:
                                 UPDATE Erreserba SET bueltatu_da = 1 WHERE user_id = ? AND book_id = ?;
                         """, (f"{user}", f"{liburu_id}"))
 
+    ##-----------------------------------------------------------------------------------------------------------
+    ##Gomendioak
     def get_lagunak_ids(self, id=0):
         res = db.select("""
                       SELECT *
@@ -485,6 +509,8 @@ class LibraryController:
         ]
         return libs
 
+    ##-----------------------------------------------------------------------------------------------------------
+    ##Admin
     def get_all_erab(self):
         res = db.select("SELECT username, email FROM User")
         erabs = [{"username": user[0], "email": user[1]} for user in res]

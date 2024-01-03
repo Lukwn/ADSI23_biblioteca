@@ -24,17 +24,18 @@
                 {{ "Erreserbatu" if 'user' in request.__dict__ and request.user and request.user.token else "Saioa hasi erreserbatzeko"
                 }}
             </button>
-            </div>
         </div>
-        </form>
     </div>
+    </form>
+</div>
     {% if 'user' in request.__dict__ and request.user and request.user.token: %}
-        <h4 style="margin-top: 2rem; margin-bottom: 1rem">ERRESEINAK</h4>
+    <div class="container p-5 my-5 border">
+        <h4 style="margin-bottom: 1rem">ERRESEINAK</h4>
         <!-- ERRESEINA IDATZI -->
         {% if not user_erreseina %}
             {% if erreseina_ahal_du %}
             <div class="userCard">
-                <div class="card d-flex flex-row" style="width: 76.4rem;">
+                <div class="card d-flex flex-row">
                     <div class="card-body" style="justify-content: center; align-items: center;">
                         <form class="form-inline" method="POST">
                             <div class="input-group mb-2 mr-sm-2">
@@ -63,9 +64,9 @@
 
         <div class="row">
         <!-- ERABILTZAILEAREN ERRESEINA -->
-        {% if user_erreseina and edit == False%}
+            {% if user_erreseina and edit == False%}
             <div class="userCard">
-                <div class="card d-flex flex-row" style="width: 76.4rem;">
+                <div class="card d-flex flex-row">
                     <div class="card-body" style=" justify-content: center; align-items: center">
                         <h5 class="card-title">Nire Iruzkina</h5>
                         <p class="card-text">{{user_erreseina.izarKop}}/10</p>
@@ -82,11 +83,11 @@
                         </form>
                     </div>
                 </div>
-            </div>
+        </div>
         {% endif %}
         {% if edit == True %}
             <div class="userCard">
-                <div class="card d-flex flex-row" style="width: 76.4rem;">
+               <div class="card d-flex flex-row">
                     <div class="card-body" style="justify-content: center; align-items: center;">
                         <h5 class="card-title">Nire Iruzkina</h5>
                         <form class="form-inline" method="POST">
@@ -106,16 +107,15 @@
                     </div>
                 </div>
             </div>
+
         {% endif %}
     {%else%}
         <h4 class="card-title" style="margin-top: 2rem; margin-bottom: 2rem">Iruzkin bat jartzeko Log In egin behar duzu</h4>
     {% endif %}
-
-
        <!-- BESTE ERABILTZAILE GUZTIEN ERRESEINAK -->
        {% for erreseina in erreseinak %}
            <div class="userCard">
-               <div class="card d-flex flex-row" style="width: 76.4rem;">
+               <div class="card d-flex flex-row">
                    <div class="card-body" style=" justify-content: center; align-items: center">
                        <h5 class="card-title">{{erreseina.username}}</h5>
                        <p class="card-text">{{erreseina.izarKop}}/10</p>
