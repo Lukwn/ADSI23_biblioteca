@@ -1,0 +1,32 @@
+{
+  "erreserbak": [
+    {
+      "user_id": "1",
+      "hasiera_data": "2023-12-12",
+      "book_id": "1",
+      "bueltatze_data": "2024-12-13",
+      "bueltatu_da": "1"
+    },
+    {
+      "user_id": "1",
+      "hasiera_data": "2023-12-12",
+      "book_id": "0",
+      "bueltatze_data": "2024-12-13",
+      "bueltatu_da": "1"
+    },
+    {
+      "user_id": "1",
+      "hasiera_data": "2023-12-12",
+      "book_id": "2",
+      "bueltatze_data": "2023-12-13",
+      "bueltatu_da": "0"
+    },
+    {
+      "user_id": "1",
+      "hasiera_data": "2023-12-12",
+      "book_id": "3",
+      "bueltatze_data": "2024-12-13",
+      "bueltatu_da": "1"
+    }
+  ]
+}

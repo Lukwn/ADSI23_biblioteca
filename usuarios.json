@@ -1,28 +1,59 @@
 {
   "usuarios": [
     {
-      "id": "1",
-      "nombres": "James Gomez",
+      "id": 1,
+      "username": "Jamesito",
       "email": "james@gmail.com",
-      "password": "123456"
+      "password": "123456",
+      "firstname": "James",
+      "lastnames": "Gomez",
+      "picture": 0,
+      "phone": 123456789,
+      "baimenak": 1
     },
     {
-      "nombres": "Jhon Doe",
-      "email": "jhon@gmail.com",
-      "password": "123",
-      "id": "2"
-    },
-    {
-      "nombres": "Juan Ejemplo",
+      "id": 3,
+      "username": "Ejemplo1",
       "email": "ejemplo@gmail.com",
       "password": "123456",
-      "id": "NgbZCib"
+      "firstname": "Juan",
+      "lastnames": "Ejemplo",
+      "picture": 6,
+      "phone": 123123123,
+      "baimenak": 0
     },
     {
-      "nombres": "Juan Ejemplo",
+      "id": 4,
+      "username": "Ejemplo2",
       "email": "ejemplo@gmail.com",
       "password": "123456",
-      "id": "S_Faisg"
+      "firstname": "Juan",
+      "lastnames": "Ejemplo",
+      "picture": 4,
+      "phone": 321321321,
+      "baimenak": 0
+    },
+    {
+      "id": 5,
+      "username": "Pablito",
+      "email": "pablo@gmail.com",
+      "password": "123456",
+      "firstname": "Pablo",
+      "lastnames": "Jerez",
+      "picture": 9,
+      "phone": 456456456,
+      "baimenak": 0
+    },
+    {
+      "id": 6,
+      "username": "pepe",
+      "email": "bitorehu@gmail.com",
+      "password": "123456",
+      "firstname": "pepe",
+      "lastnames": "pepe",
+      "picture": 3,
+      "phone": 0,
+      "baimenak": 1
     }
   ]
 }

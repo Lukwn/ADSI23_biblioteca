@@ -49,7 +49,7 @@ cur.execute("""
 	)
 """)
 
-cur.execute("""
+cur.execute("""	
 	CREATE TABLE Eskaera(
 		EID1 integer,
 		EID2 integer,
@@ -89,7 +89,41 @@ cur.execute("""
 	)
 """)
 
+cur.execute("""
+	CREATE TABLE Erreseina(
+		user_id  integer,
+		book_id  integer,
+		izarKop  integer,
+		iruzkina varchar(1000),
+		PRIMARY KEY (user_id, book_id),
+		FOREIGN KEY (user_id) REFERENCES User (id),
+		FOREIGN KEY (book_id) REFERENCES Book (id)
+	)
+""")
+
+cur.execute("""
+	CREATE TABLE Erreserba(
+		user_id integer,
+		hasiera_data date,
+		book_id integer,
+		bueltatze_data date,
+		bueltatu_da integer,
+		PRIMARY KEY (user_id, hasiera_data, book_id)
+		FOREIGN KEY(user_id) REFERENCES User(id),
+		FOREIGN KEY(book_id) REFERENCES Book(id)
+	)
+""")
+
 ### Insert users
+with open('../usuarios.json', 'r') as f:
+	usuarios = json.load(f)['usuarios']
+
+for user in usuarios:
+	dataBase_password = user['password'] + salt
+	hashed = hashlib.md5(dataBase_password.encode())
+	dataBase_password = hashed.hexdigest()
+	cur.execute(f"""INSERT INTO User VALUES (NULL, '{user['username']}', '{user['picture']}', '{user['firstname']}', '{user['lastnames']}', '{user['phone']}', '{user['email']}','{dataBase_password}', '{user['baimenak']}')""")
+	con.commit()
 
 ## Insert eskaerak
 
@@ -136,4 +170,30 @@ for k in komentarioak:
 	cur.execute(
 		"INSERT INTO Komentario (id, gaia_id, user_id, txt, respondiendo_a, respondiendo_a_txt) VALUES (?, ?, ?, ?, ?, ?)",
 		(k['id'], k['gaia_id'], k['user_id'], k['txt'], k['respondiendo_a'], k['respondiendo_a_txt']))
+	con.commit()
+
+#### Insert erreserbak
+with open('../erreserbak.json', 'r') as f:
+	erreserbak = json.load(f)['erreserbak']
+
+for erreserba in erreserbak:
+	cur.execute(f"""INSERT INTO Erreserba VALUES ('{erreserba['user_id']}', '{erreserba['hasiera_data']}', '{erreserba['book_id']}', '{erreserba['bueltatze_data']}', '{erreserba['bueltatu_da']}')""")
+	con.commit()
+
+#### Insert erreseinak
+with open('../erreseinak.json', 'r') as f:
+	erreseinak = json.load(f)['erreseinak']
+
+for erreseina in erreseinak:
+	cur.execute(
+		f"""INSERT INTO Erreseina VALUES ('{erreseina['user_id']}', '{erreseina['book_id']}', '{erreseina['izarKop']}', '{erreseina['iruzkina']}')""")
+	con.commit()
+
+#### Insert erreserbak
+with open('../sessions.json', 'r') as f:
+	sessions = json.load(f)['sessions']
+
+for session in sessions:
+	cur.execute(
+		f"""INSERT INTO Session VALUES ('{session['session_hash']}', '{session['user_id']}', '{session['last_login']}')""")
 	con.commit()
