@@ -100,7 +100,7 @@ def profil(string):
 		page_erreseina = int(request.values.get("page_erreseina", 1))
 		page_erreserba = int(request.values.get("page_erreserba", 1))
 		erreseinak, books_erreseina, count_erreseina = library.get_erreseinaGuztiak(id=user.id, page=page_erreseina - 1)
-		erreserbak, books_erreserba, count_erreserba = library.get_erreseinaGuztiak(id=user.id, page=page_erreserba - 1)
+		erreserbak, books_erreserba, count_erreserba = library.getErabiltzaileErreserbaAktiboak(id=user.id, page=page_erreserba - 1)
 		total_pages_erreseina = (count_erreseina // 5) + 1
 		total_pages_erreserba = (count_erreserba // 5) + 1
 		return render_template('profila.html', user=user, picture=picture,
@@ -154,7 +154,7 @@ def onartu(id):
 def book():
 	#ERRESERBAK
 	id = request.values.get("id", "")
-	book = library.get_book(id=id)
+	book = library.findBook(id=id)
 	msg = None
 	botoia_eskuragai = True
 	liburu_erreserbak = library.getLiburuErreserbaAktiboak(book_id=book.id)
@@ -268,7 +268,6 @@ def bueltatu_aukeratu():
 	author = request.values.get("author", "")
 	page = int(request.values.get("page", 1))
 	data = date.today()
-	print(user)
 	books, nb_books = library.search_erreserbatuta(user=user, title=title, author=author, page=page - 1)
 	total_pages = (nb_books // 6) + 1
 	return render_template('bueltatu_aukeratu.html', books=books, title=title, author=author, current_page=page,
@@ -341,7 +340,7 @@ def gaia():
 def add_gaia():
 	if request.method == 'POST':
 		string.izena = request.form.get("izena", "")
-		if len(string.izena) <= 50:
+		if len(string.izena) <= 50 and string.izena != "":
 			library.add_gaia(string.izena)
 			"""izena, page, gaiak, nb_gaiak, total_pages = foro_info()
 			return render_template('foro.html', gaiak=gaiak, izena=izena, current_page=page,
