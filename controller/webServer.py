@@ -152,38 +152,43 @@ def onartu(id):
 
 @app.route('/book', methods=['GET', 'POST'])
 def book():
-	#ERRESERBAK
+	# ERRESERBAK
 	id = request.values.get("id", "")
 	book = library.findBook(id=id)
 	msg = None
 	botoia_eskuragai = True
-	liburu_erreserbak = library.getLiburuErreserbaAktiboak(book_id=book.id)
-	if len(liburu_erreserbak) == 0:
-		if request.method == 'POST':
-			if "erreserbatu" in request.form:
-				if 'user' in request.__dict__ and request.user and request.user.token:
-					id = request.user.id
-					erab_erreserbak = library.getErabiltzaileErreserba(id=id)
-					ahal_du = True
-					for erreserba in erab_erreserbak:
-						if erreserba.datanDago():
-							msg = "Erreserbatu duzun liburu baten denbora-muga pasatu da eta ez duzu bueltatu, ezin dituzu liburu gehiago erreserbatu."
-							ahal_du = False
+	if book is not None:
+		liburu_erreserbak = library.getLiburuErreserbaAktiboak(book_id=book.id)
+		if len(liburu_erreserbak) == 0:
+			if request.method == 'POST':
+				if "erreserbatu" in request.form:
+					if 'user' in request.__dict__ and request.user and request.user.token and len(
+							liburu_erreserbak) == 0:
+						id = request.user.id
+						erab_erreserbak = library.getErabiltzaileErreserba(id=id)
+						ahal_du = True
+						for erreserba in erab_erreserbak:
+							if erreserba.datanDago():
+								msg = "Erreserbatu duzun liburu baten denbora-muga pasatu da eta ez duzu bueltatu, ezin dituzu liburu gehiago erreserbatu."
+								ahal_du = False
+								botoia_eskuragai = False
+								break
+						if ahal_du:
+							library.erreserbatu(id=id, book_id=book.id)
 							botoia_eskuragai = False
-							break
-					if ahal_du:
-						library.erreserbatu(id=id, book_id=book.id)
-						botoia_eskuragai = False
-						msg = "Liburua erreserbatu duzu."
-				else:
-					return redirect("/login")
+							msg = "Liburua erreserbatu duzu."
+					else:
+						return redirect("/login")
+		else:
+			msg = "Liburua jadanik erreserbatuta dago"
+			botoia_eskuragai = False
 	else:
-		msg = "Ez dago liburuaren kopiarik eskuragai."
+		msg = "Liburua ez da existitzen"
 		botoia_eskuragai = False
 
-	#ERRESEINAK
+	# ERRESEINAK
 	book_id = id
-	edit= False
+	edit = False
 	msg_erreseina = None
 	if request.method == 'POST':
 		user_id = request.user.id
@@ -207,19 +212,18 @@ def book():
 		else:
 			msg_erreseina = "Izar kopurua adierazi mesedez"
 
-
 		# editatzeko botoia sakatzean
 		editable = request.form.get("editable", "")
 		if (editable == 'True'):
 			edit = True
 
-
-	#erreseinak erakutsi
+	erreseina_ahal_du = False
+	user_id = 0
+	# erreseinak erakutsi
 	if 'user' in dir(request) and request.user and request.user.token:
 		user_id = request.user.id
 		erreseina_ahal_du = library.erreseinatu_ahal_du(user_id=user_id, book_id=book_id)
-	else:
-		user_id = 0
+
 
 	erreseinak, count = library.get_erreseinak(id=id, user_id=user_id)
 	user_erreseina = library.get_user_erreseina(id=id, user_id=user_id)
@@ -230,10 +234,11 @@ def book():
 		# existitzekotan informazioa gorde
 		user_erreseina = user_erreseina[0]
 
-	return render_template('book.html', book=book, erreseinak=erreseinak, user_erreseina=user_erreseina, erreseina_ahal_du=erreseina_ahal_du, edit=edit, msg=msg, msg_erreseina=msg_erreseina, botoia_eskuragai=botoia_eskuragai,
-							   current_page=page,
-							   total_pages=total_pages, max=max, min=min)
-
+	return render_template('book.html', book=book, erreseinak=erreseinak, user_erreseina=user_erreseina,
+						   erreseina_ahal_du=erreseina_ahal_du, edit=edit, msg=msg, msg_erreseina=msg_erreseina,
+						   botoia_eskuragai=botoia_eskuragai,
+						   current_page=page,
+						   total_pages=total_pages, max=max, min=min)
 
 @app.route('/history')
 def history():

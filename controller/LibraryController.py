@@ -43,7 +43,10 @@ class LibraryController:
 
     def findBook(self, id):
         b = db.select("SELECT * FROM Book WHERE id=?", (id,))
-        return Book(b[0][0], b[0][1], b[0][2], b[0][3], b[0][4])
+        if (not b) :
+            return None
+        else:
+            return Book(b[0][0], b[0][1], b[0][2], b[0][3], b[0][4])
 
     ##-----------------------------------------------------------------------------------------------------------
     # Gaiak eta komentarioak

@@ -16,3 +16,11 @@ class BaseTestClass(unittest.TestCase):
 			email=email,
 			password=password
 		))
+
+	def logout(self,):
+		return self.client.get('/logout')
+
+	def liburua_erreserbatu(self, book_id):
+		url = f'/book?id={book_id}'
+		return self.client.post(url, data=dict(
+			erreserbatu=''))
