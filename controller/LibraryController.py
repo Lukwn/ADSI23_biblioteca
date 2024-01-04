@@ -91,11 +91,13 @@ class LibraryController:
             return None
 
     def add_gaia(self, izena):
-        db.insert("INSERT INTO Gaia (izena) VALUES (?)", (izena,))
+        if izena != "" and len(izena) <= 50:
+            db.insert("INSERT INTO Gaia (izena) VALUES (?)", (izena,))
 
     def add_komentario(self, gaia_id, user_id, txt, respondiendo_a, respondiendo_a_txt):
-        db.insert("INSERT INTO Komentario (gaia_id, user_id, txt, respondiendo_a, respondiendo_a_txt) VALUES (?, ?, ?, ?, ?)",
-            (gaia_id, user_id, txt, respondiendo_a, respondiendo_a_txt,))
+        if txt != "" and len(txt) <= 250:
+            db.insert("INSERT INTO Komentario (gaia_id, user_id, txt, respondiendo_a, respondiendo_a_txt) VALUES (?, ?, ?, ?, ?)",
+         (gaia_id, user_id, txt, respondiendo_a, respondiendo_a_txt,))
 
     ##-----------------------------------------------------------------------------------------------------------
     ##Login egiteko beharrezkoak
