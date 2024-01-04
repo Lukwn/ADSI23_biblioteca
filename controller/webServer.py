@@ -166,8 +166,7 @@ def book():
 					erab_erreserbak = library.getErabiltzaileErreserba(id=id)
 					ahal_du = True
 					for erreserba in erab_erreserbak:
-						erreserba_data = datetime.strptime(erreserba.bueltatze_data, "%Y-%m-%d").date()
-						if erreserba_data < date.today() and erreserba.bueltatu_da == 0:
+						if erreserba.datanDago():
 							msg = "Erreserbatu duzun liburu baten denbora-muga pasatu da eta ez duzu bueltatu, ezin dituzu liburu gehiago erreserbatu."
 							ahal_du = False
 							botoia_eskuragai = False
