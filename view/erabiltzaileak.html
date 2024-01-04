@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
+{% if request.user.baimenak == true %}
 <div class="container">
     <div class="" style="align-items: end; justify-content: end; display: flex">
         <div class="button"style="margin-right: 10px;"><a href="/eskaerak"><i class="fa fa-envelope" style="font-size: 5rem;"></i></a></div>
@@ -70,5 +71,5 @@
 
 
 </div>
-
+{% endif %}
 {% endblock %}

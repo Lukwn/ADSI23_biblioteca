@@ -2,6 +2,7 @@
 
 
 {% block content %}
+{% if request.user.baimenak == true %}
 <div class="container p-5 my-5 border">
 
 
@@ -35,4 +36,5 @@
 
 
 </div>
+{% endif %}
 {% endblock %}
