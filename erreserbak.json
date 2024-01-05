@@ -27,6 +27,20 @@
       "book_id": "3",
       "bueltatze_data": "2024-12-13",
       "bueltatu_da": "1"
+    },
+    {
+      "user_id": "2",
+      "hasiera_data": "2023-12-12",
+      "book_id": "300",
+      "bueltatze_data": "2024-12-13",
+      "bueltatu_da": "0"
+    },
+    {
+      "user_id": "2",
+      "hasiera_data": "2023-12-12",
+      "book_id": "301",
+      "bueltatze_data": "2024-12-13",
+      "bueltatu_da": "0"
     }
   ]
 }

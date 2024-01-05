@@ -24,3 +24,7 @@ class BaseTestClass(unittest.TestCase):
 		url = f'/book?id={book_id}'
 		return self.client.post(url, data=dict(
 			erreserbatu=''))
+
+	def liburua_bueltatu(self, book_id, user_id):
+		url = f"/bueltatu_aukeratu?user={user_id}"
+		return self.client.post(url, data = dict( liburu_id = book_id))

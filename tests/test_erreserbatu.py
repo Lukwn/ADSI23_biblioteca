@@ -40,6 +40,7 @@ class TestErreserbatu(BaseTestClass):
         sql_test = self.db.select(f"SELECT * FROM Erreserba WHERE user_id = 1 AND book_id = {book_id} AND bueltatu_da = 0")
         self.assertEqual(200, res.status_code)
         self.assertTrue(not sql_test)
+        # Espero den bezala erreserba ez da egiten
 
         # Erreserba egiterakoak liburua ez da existitzen
         book_id = 1020121
@@ -48,3 +49,4 @@ class TestErreserbatu(BaseTestClass):
         self.db.select(f"SELECT * FROM Erreserba WHERE user_id = 2 AND book_id = {book_id} AND bueltatu_da = 0")
         self.assertEqual(200, res.status_code)
         self.assertTrue(not sql_test)
+        # Espero den bezala erreserba ez da egiten
