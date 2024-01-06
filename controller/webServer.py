@@ -449,7 +449,7 @@ def libBerria():
       if dago[0][0] == 1:
          error_message_book = "Liburu hori jadanik dago liburutegian"
       else:
-         description= request.form.get("descrition", "")
+         description= request.form.get("description", "")
          cover = request.form.get("cover", "")
          authorZenb = library.add_author(author)
          library.add_liburua(title, authorZenb[0][0], description, cover)
