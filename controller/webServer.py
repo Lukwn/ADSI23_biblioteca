@@ -173,6 +173,11 @@ def book():
 								ahal_du = False
 								botoia_eskuragai = False
 								break
+							elif erreserba.gaur_erreserbatuta(book.id):
+								msg = "Ezin duzu liburu berdina birritan egun berdinean erreserbatu."
+								ahal_du = False
+								botoia_eskuragai = False
+								break
 						if ahal_du:
 							library.erreserbatu(id=id, book_id=book.id)
 							botoia_eskuragai = False

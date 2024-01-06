@@ -11,3 +11,7 @@ class Erreserba:
 	def datanDago(self):
 		erreserba_data = datetime.strptime(self.bueltatze_data, "%Y-%m-%d").date()
 		return erreserba_data < date.today() and self.bueltatu_da == 0
+
+	def gaur_erreserbatuta(self, book_id):
+		erreserba_data = datetime.strptime(self.hasiera_data, "%Y-%m-%d").date()
+		return erreserba_data == date.today() and book_id == book_id
