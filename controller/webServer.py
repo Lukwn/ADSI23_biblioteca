@@ -61,7 +61,7 @@ def lagunSarea():
 def erabiltzaileak():
 	username = request.values.get("username", "")
 	page = int(request.values.get("page", 1))
-	erabiltzaileak, pictures, nb_erabiltzaile = library.search_user(username=username, page=page - 1)
+	erabiltzaileak, pictures, nb_erabiltzaile = library.search_user(username=username, user_id=request.user.id, page=page - 1)
 	total_pages = (nb_erabiltzaile // 10) + 1
 	return render_template('erabiltzaileak.html', erabiltzaileak=erabiltzaileak, pictures =pictures, zip=zip,
 						   current_page=page, total_pages=total_pages, max=max, min=min)
@@ -71,8 +71,8 @@ def eskaerak():
 	idUser = request.user.id
 	page_bidali = int(request.values.get("page_bidali", 1))
 	page_jaso = int(request.values.get("page_jaso", 1))
-	bidali, picturesBidali, nb_bidali = library.get_bidalitakoEskaerak(page=page_bidali-1)
-	jaso, picturesJaso, nb_jaso = library.get_jasotakoEskaerak(page=page_jaso - 1)
+	bidali, picturesBidali, nb_bidali = library.get_bidalitakoEskaerak(user_id=idUser, page=page_bidali-1)
+	jaso, picturesJaso, nb_jaso = library.get_jasotakoEskaerak(user_id=idUser, page=page_jaso - 1)
 	total_pages_bidali = (nb_bidali // 5) + 1
 	total_pages_jaso = (nb_jaso // 5) + 1
 	return render_template('eskaerak.html', idUser=idUser,
@@ -84,13 +84,11 @@ def eskaerak():
 
 @app.route('/<string>')
 def profil(string):
-
 	parts = string.split('-', 1)
 	if len(parts) < 2:
 		return "Formato incorrecto", 400
 
 	prefix, username = parts
-
 	#Erabiltzile bat balitz user->usr
 	if (prefix=='usr'):
 		user = library.getUserUsername(username)
@@ -109,23 +107,18 @@ def profil(string):
 							   total_pages_erreseina=total_pages_erreseina, current_page_erreseina=page_erreseina,
 							   total_pages_erreserba=total_pages_erreserba, current_page_erreserba=page_erreserba,
 							   zip=zip, max=max, min=min)
-
 	#Lagun eskaera bidaltzea balitz gehituLaguna->gl
 	elif (prefix=='gl'):
 		return gehitu(username)
-
 	#Lagun bat kentzea edo Eskaera bat ukatzea balitz kendu
 	elif (prefix=='kl'):
 		return kendu(username)
-
 	# Eskaera bat ukatzea balitz ukatuEskaera->ue
 	elif (prefix == 'ue'):
 		return ukatu(username)
-
 	#Eskaera bat onartzea balitz onartuEskaera->oe
 	elif (prefix=='oe'):
 		return onartu(username)
-
 	else:
 		return "Prefix not found", 404
 

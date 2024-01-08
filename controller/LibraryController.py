@@ -1,5 +1,5 @@
 from model import Connection, Book, User, Erreseina, Gaia, Komentario, Erreserba
-from flask import request
+from flask import request, session
 
 from model.Pictures import Pictures
 from model.tools import hash_password
@@ -159,8 +159,6 @@ class LibraryController:
         else:
             return None
 
-    def getUserMax(self):
-        return db.select("SELECT MAX(id) FROM User")
     def get_picture(self, id):
         picture = db.select("SELECT link FROM Pictures WHERE ID = ?", (id,))
         if picture:
@@ -169,7 +167,7 @@ class LibraryController:
             return None
 
 ##Erabiltzileak bilatu
-    def search_user(self, username="", limit=10, page=0):
+    def search_user(self, username="", user_id=0, limit=10, page=0):
         count = db.select("""
                               SELECT count()
                               FROM User
@@ -183,7 +181,7 @@ class LibraryController:
                                 FROM Eskaera
                                 WHERE Eskaera.EID1 = ?
                               )
-                        """, (request.user.id, f"%{username}%", request.user.id, request.user.id))[0][0]
+                        """, (user_id, f"%{username}%", user_id, user_id))[0][0]
         res = db.select("""
                               SELECT *
                               FROM User
@@ -198,7 +196,7 @@ class LibraryController:
                                 WHERE Eskaera.EID1 = ?
                               )
                               LIMIT ? OFFSET ?
-                        """, (request.user.id, f"%{username}%", request.user.id, request.user.id, limit, limit * page))
+                        """, (user_id, f"%{username}%", user_id, user_id, limit, limit * page))
         users = [
             User(u[0], u[1], u[2], u[4], u[5], u[6], u[7], u[8])
             for u in res
@@ -211,18 +209,18 @@ class LibraryController:
 
     ##-----------------------------------------------------------------------------------------------------------
     ## Eskaerak
-    def get_bidalitakoEskaerak(self, limit=5, page=0):
+    def get_bidalitakoEskaerak(self, user_id=0, limit=5, page=0):
         count = db.select("""
                                SELECT count()
                                FROM Eskaera
                                WHERE EID1=? AND baieztatuta=0
-                         """, (request.user.id,))[0][0]
+                         """, (user_id,))[0][0]
         res = db.select("""
                                SELECT *
                                FROM Eskaera
                                WHERE EID1=? AND baieztatuta=0
                                LIMIT ? OFFSET ?
-                         """, (request.user.id, limit, limit * page))
+                         """, (user_id, limit, limit * page))
         bidali = [
             self.getUser(e[1])
             for e in res
@@ -233,18 +231,18 @@ class LibraryController:
         ]
         return bidali, pictures, count
 
-    def get_jasotakoEskaerak(self, limit=5, page=0):
+    def get_jasotakoEskaerak(self, user_id=0, limit=5, page=0):
         count = db.select("""
                                SELECT count()
                                FROM Eskaera
                                WHERE EID2=? AND baieztatuta=0
-                         """, (request.user.id,))[0][0]
+                         """, (user_id,))[0][0]
         res = db.select("""
                                SELECT *
                                FROM Eskaera
                                WHERE EID2=? AND baieztatuta=0
                                LIMIT ? OFFSET ?
-                         """, (request.user.id, limit, limit * page))
+                         """, (user_id, limit, limit * page))
         jaso = [
             self.getUser(e[0])
             for e in res
@@ -255,15 +253,15 @@ class LibraryController:
         ]
         return jaso, pictures, count
 
-    def onartuEskaera(self, id):
-        db.update("UPDATE Eskaera SET baieztatuta=true WHERE EID1=? AND EID2=?", (id, request.user.id))
+    def onartuEskaera(self, id, user_id=0):
+        db.update("UPDATE Eskaera SET baieztatuta=true WHERE EID1=? AND EID2=?", (id, user_id))
 
-    def kenduUkatu(self, id):
-        db.delete("DELETE FROM Eskaera WHERE (EID1=? AND EID2=?) OR (EID1=? AND EID2=?)", (id, request.user.id, request.user.id, id,))
+    def kenduUkatu(self, id, user_id=0):
+        db.delete("DELETE FROM Eskaera WHERE (EID1=? AND EID2=?) OR (EID1=? AND EID2=?)", (id, user_id, user_id, id,))
 
 
-    def gehituLagun(self, id):
-        db.insert("INSERT INTO Eskaera VALUES (?,?,false)", (request.user.id, id))
+    def gehituLagun(self, id, user_id=0):
+        db.insert("INSERT INTO Eskaera VALUES (?,?,false)", (user_id, id))
 
     ##-----------------------------------------------------------------------------------------------------------
     ##Erreseinak
@@ -315,13 +313,13 @@ class LibraryController:
         ]
         return user_erreseina
 
-    def get_erreseinaGuztiak(self,id, limit=5, page=0):
+    def get_erreseinaGuztiak(self, id, limit=5, page=0):
         count = db.select("""
                       SELECT count()
                       FROM Erreseina
                       WHERE user_id = ?
                     """, (id,))[0][0]
-        user_err = db.select("""
+        res = db.select("""
                               SELECT *
                               FROM Erreseina
                               WHERE user_id = ?
@@ -329,11 +327,11 @@ class LibraryController:
                             """, (id, limit, limit*page))
         user_erreseina = [
             Erreseina('', err[0], err[1], err[2], err[3])
-            for err in user_err
+            for err in res
         ]
         books = [
             self.findBook(err[1])
-            for err in user_err
+            for err in res
         ]
         return user_erreseina, books, count
 
