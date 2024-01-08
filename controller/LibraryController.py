@@ -4,7 +4,7 @@ from flask import request, session
 from model.Pictures import Pictures
 from model.tools import hash_password
 from datetime import date,timedelta, datetime
-
+import random
 db = Connection()
 
 
@@ -493,24 +493,51 @@ class LibraryController:
             Book(b[0], b[1], b[2], b[3], b[4])
             for b in res
         ]
-
         return books
 
-    def getBerriak(self,gomendioak,idUser):
+    def getBerriak(self, gomendioak, idUser):  # gomedioak hartu eta filtratu, liburu ez irakurriak bakarrik agertu daitezan
 
-        books = [
+        booksid = [
             b.id
             for b in gomendioak
-        ]
+        ]  # liburuen idak hartu
+        consulta_sql = f"SELECT b.* FROM Book b, Erreserba e WHERE b.id IN ({', '.join(map(str, booksid))}) AND e.book_id=b.id AND e.user_id!={idUser}"
+        res = db.select(consulta_sql)  # konprobatu irakurri ditudan
 
-        consulta_sql = f"SELECT b.* FROM Book b, Erreserba e WHERE b.id IN ({', '.join(map(str, books))}) AND e.book_id=b.id AND e.user_id!={idUser}"
+        filtratuta = [
+            Book(bo[0], bo[1], bo[2], bo[3], bo[4])
+            for bo in res
+        ]  # gomendio zerrenda berria lortu
+        return filtratuta
+
+    def irakurriakEman(self, idUser):
+        # irakurritako liburuak emateko
+        consulta_sql = f"SELECT b.* FROM Book b, Erreserba e WHERE  e.book_id=b.id AND e.user_id={idUser}"
         res = db.select(consulta_sql)
-
-        libs = [
+        books = [
             Book(b[0], b[1], b[2], b[3], b[4])
             for b in res
         ]
-        return libs
+
+        return books
+
+    def search_books1(self, idUser):
+        # irakurritako liburuak lortu
+        irak = self.irakurriakEman(idUser)
+        # irakurritako liburuen id-a lortu
+        booksidIrak = [
+            l.id
+            for l in irak
+        ]
+        consulta_sql = f"SELECT b.* FROM Book b, Erreserba e WHERE b.id NOT IN ({', '.join(map(str, booksidIrak))}) AND e.book_id!=b.id AND e.user_id!={idUser}"
+        res = db.select(consulta_sql)  # irakurri ez ditudanak bueltatzeko
+        books0 = [
+            Book(bo[0], bo[1], bo[2], bo[3], bo[4])
+            for bo in res
+        ]
+        # irakurri ez diren liburu guztiatatik 6 hartuko ditu, eta 'eguneratu' ematean beste 6 agertuko dira
+        books = random.sample(books0, 6)
+        return books
 
     ##-----------------------------------------------------------------------------------------------------------
     ##Admin
@@ -550,7 +577,7 @@ class LibraryController:
 
     def add_user(self, username, email, password, firstname, lastnames, picture, phone, baimenak):
         db.insert(
-            "INSERT INTO User(username, email, password, firstname, lastnames, picture, phone, baimenak) VALUES (?,?,?,?,?,?,?,?);",
+            "INSERT INTO User(username, email, password, firstname, lastname, picture, phone, baimenak) VALUES (?,?,?,?,?,?,?,?);",
             (username, email, hash_password(password), firstname, lastnames, picture, phone, baimenak,))
 
     def bilatu_erabs(self, username, email):

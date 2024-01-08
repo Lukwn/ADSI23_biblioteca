@@ -53,6 +53,12 @@
       "book_id": 9032,
       "izarKop": 2,
       "iruzkina": "bcd"
+    },
+    {
+      "user_id": 2,
+      "book_id": 150,
+      "izarKop": 5,
+      "iruzkina": "Ez"
     }
   ]
 }

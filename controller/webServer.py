@@ -363,15 +363,24 @@ def gomendio():
 		title= request.values.get("title","")
 		author= request.values.get("author","")
 		idUser= request.user.id
-		lagunak, plagunak, nlagunak= library.search_lagunak(idUser)
-		if nlagunak<=0:
-			zenb=random.randrange(0,1000)
-			gomendioak, ngomendioak= library.search_books(title=title, author=author, page=zenb)
-		else:
-			gomendioak= library.getGomendioak(idUser=idUser)
-			gomendioak= library.getBerriak(gomendioak=gomendioak, idUser=idUser)
+		lagunak, plagunak, nlagunak= library.search_lagunak(idUser) #nire lagun zenbaki lortzeko bakrrik
+		#if idUser is None:# uste dut ez dela inoiz emnago, baian badaezpada (6 liburu gomendatu, inolako filtrorik gabe)
+		#zenb = random.randrange(0, 1500)
+		#gomendioak, ngomendioak = library.search_books(title=title, author=author, page=zenb)
+		if nlagunak<=0: #ez du lagunik beraz liburutegiko liburuak gomedatuko ditu 6 liburu (jada irakurritakoak ez)
+			#zenb=random.randrange(0,1507)
+			#gomendioak, nlibs= library.search_books(title=title, author=author, page=zenb)
+			gomendioak= library.search_books1(idUser=idUser)
 
+		else:#lagunak ditu, beraz lagunek liburuetan jarritako balorazioak kontuan hartuko dira (liburuaren balorazioa 6 edo handiagoa denean).
+			gomendioak= library.getGomendioak(idUser=idUser)
+			gomendioak = library.getBerriak(gomendioak=gomendioak, idUser=idUser)
+			if len(gomendioak)<=0: #lagunak ditu, baina ez dute liburuetan erreseinarik egin (edo nota txarra dute)
+				# prioritatea emango zaio lagunek jarritako balorazioei. Beraz, nahiz eta lagunek 6 liburu baino gutxiago baloratu, horiek agertuko zaizkio erabiltzaileari.
+				#Beste modu batera esanda, liburu horiek irakurri harte edota lagunek balorazio gehiago egin harte, gomedioek ez lukete aldatu beharko.
+				gomendioak = library.search_books1(idUser=idUser)
 	return render_template('gomendio.html', gomendioak=gomendioak)
+
 
 @app.route('/admin')
 def admin():

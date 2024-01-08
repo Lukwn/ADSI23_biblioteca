@@ -3,11 +3,24 @@ from bs4 import BeautifulSoup
 
 class TestBueltatu(BaseTestClass):
     def test_liburu_bueltatu_ikusi(self):
+        # Erabiltzailea existitzen da.
         id = 2
         res = self.client.get(f'/bueltatu_aukeratu?user={id}')
         self.assertEqual(200, res.status_code)
         page = BeautifulSoup(res.data, features="html.parser")
         self.assertEqual(2, len(page.find('div', class_='list-group').find_all('div', class_='card')))
+        # Espero den bezala erreserbatutako liburuak agertzen dira.
+
+        # Erabiltzailea ez da existitzen.
+        id = 12313213132131
+        res = self.client.get(f'/bueltatu_aukeratu?user={id}')
+        self.assertEqual(200, res.status_code)
+        page = BeautifulSoup(res.data, features="html.parser")
+        self.assertEqual(0, len(page.find('div', class_='list-group').find_all('div', class_='card')))
+        # Espero den bezala ez da libururik agertzen.
+
+
+        # Ez da beharrezkoa parametroekin probak egitea (author, name) katalogoaren inplementazio berdina delako.
 
     def test_liburu_bueltatu(self):
         # Liburua erreserbatuta dago eta ez da bueltatu, beraz bueltatzean ez da errorerik egongo.

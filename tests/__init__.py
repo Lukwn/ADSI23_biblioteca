@@ -17,6 +17,21 @@ class BaseTestClass(unittest.TestCase):
 			password=password
 		))
 
+	def add_erreseina(self, izarKop, iruzkina, book_id):
+		url = f'/book?id={book_id}'
+		return self.client.post(url, data=dict(
+			izarKop=izarKop,
+			iruzkina=iruzkina
+		))
+
+	def edit_erreseina(self, izarKop, iruzkina, book_id):
+		url = f'/book?id={book_id}'
+		return self.client.post(url, data=dict(
+			izarKop=izarKop,
+			iruzkina=iruzkina,
+			editing='True'
+		))
+
 	def logout(self,):
 		return self.client.get('/logout')
 
