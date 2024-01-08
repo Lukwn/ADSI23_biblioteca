@@ -51,6 +51,16 @@ class TestBueltatu(BaseTestClass):
         self.assertEqual(200, res.status_code)
         # Itxarotako emaitza eta lortutakoak berdinak dira, hau esan nahi du erreserbaren egoera ez dela aldatu
 
+        # Bueltatuko den liburua ez du erabiltzailea erreserbatu
+        user_id = 1
+        book_id = 500
+        res = self.liburua_bueltatu(user_id, book_id)
+        sql_test = self.db.select(
+            f"SELECT * FROM Erreserba WHERE book_id = {book_id} AND user_id = {user_id} AND bueltatu_da = 1")
+        self.assertTrue(not sql_test)
+        self.assertEqual(200, res.status_code)
+        # Itxarotako emaitza eta lortutakoak berdinak dira, hau esan nahi du erreserbaren egoera ez dela aldatu (ez zelako existitzen)
+
         # Existitzen ez den erabiltzaile bat liburu bat bueltatu nahi du (berdin da zein liburu den)
         user_id = 112312131
         book_id = 200
